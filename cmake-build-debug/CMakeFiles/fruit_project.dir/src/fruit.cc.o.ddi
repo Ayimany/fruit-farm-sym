@@ -1,9 +1,0 @@
-{
-  "revision": 0,
-  "rules": [
-    {
-      "primary-output": "CMakeFiles/fruit_project.dir/src/fruit.cc.o"
-    }
-  ],
-  "version": 1
-}
