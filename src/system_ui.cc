@@ -70,8 +70,8 @@ namespace fmk {namespace ui {
 
         puts(
             the_farmer.is_best_farmer()
-                ? "You are currently NOT the best farmer :("
-                : "You ARE the best farmer! :)"
+                ? "You ARE the best farmer! :)"
+                : "You are currently NOT the best farmer :("
         );
 
         divider();
