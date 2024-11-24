@@ -14,7 +14,7 @@ main() {
 
     int choice;
     do {
-        choice = fmk::ui::menu_ui(farmer);
+        choice = fmk::ui::print_menu_ui(farmer);
 
         switch (choice) {
             case 1: {
@@ -23,22 +23,22 @@ main() {
             }
 
             case 2: {
-                fmk::ui::ff_ui(farmer, request_generator);
+                fmk::ui::print_fast_forward_ui(farmer, request_generator);
                 break;
             }
 
             case 3: {
-                fmk::ui::shop_ui(farmer);
+                fmk::ui::print_shop_ui(farmer);
                 break;
             }
 
             case 4: {
-                fmk::ui::requests_ui(farmer, request_generator);
+                fmk::ui::print_requests_ui(farmer, request_generator);
                 break;
             }
 
             case 5: {
-                fmk::ui::generic_farm_ui(
+                fmk::ui::print_generic_farm_ui(
                     "strawberry",
                     farmer,
                     farmer.get_strawberry_farm()
@@ -47,7 +47,7 @@ main() {
             }
 
             case 6: {
-                fmk::ui::generic_farm_ui(
+                fmk::ui::print_generic_farm_ui(
                     "elderberry",
                     farmer,
                     farmer.get_elderberry_farm()
@@ -56,7 +56,7 @@ main() {
             }
 
             case 7: {
-                fmk::ui::generic_farm_ui(
+                fmk::ui::print_generic_farm_ui(
                     "watermelon",
                     farmer,
                     farmer.get_watermelon_farm()

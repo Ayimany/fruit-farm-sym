@@ -76,7 +76,7 @@ namespace fmk {namespace ui {
     }
 
     auto
-    ff_ui(
+    print_fast_forward_ui(
         farmer &           the_farmer,
         request_generator &generator
     )
@@ -104,7 +104,7 @@ namespace fmk {namespace ui {
     }
 
     auto
-    menu_ui(
+    print_menu_ui(
         const farmer &the_farmer
     )
         -> int {
@@ -146,7 +146,7 @@ namespace fmk {namespace ui {
     }
 
     auto
-    confirm_purchase_ui(
+    print_purchase_confirmation_ui(
         const farmer &the_farmer,
         const double  amt
     )
@@ -175,7 +175,7 @@ namespace fmk {namespace ui {
     }
 
     auto
-    shop_ui(
+    print_shop_ui(
         farmer &the_farmer
     )
         -> void {
@@ -218,7 +218,7 @@ namespace fmk {namespace ui {
                         break;
                     }
 
-                    const bool will_buy = confirm_purchase_ui(
+                    const bool will_buy = print_purchase_confirmation_ui(
                         the_farmer,
                         constants::ELDERBERRY_FARM_COST
                     );
@@ -236,7 +236,7 @@ namespace fmk {namespace ui {
                         break;
                     }
 
-                    const bool will_buy = confirm_purchase_ui(
+                    const bool will_buy = print_purchase_confirmation_ui(
                         the_farmer,
                         constants::WATERMELON_FARM_COST
                     );
@@ -254,7 +254,7 @@ namespace fmk {namespace ui {
                         break;
                     }
 
-                    const bool will_buy = confirm_purchase_ui(
+                    const bool will_buy = print_purchase_confirmation_ui(
                         the_farmer,
                         constants::BEST_FARMER_COST
                     );
@@ -272,7 +272,7 @@ namespace fmk {namespace ui {
     }
 
     auto
-    display_request(
+    print_request_display_element(
         const std::pair<request_kind, std::pair<double, int>> &request
     )
         -> void {
@@ -295,7 +295,7 @@ namespace fmk {namespace ui {
     }
 
     auto
-    requests_ui(
+    print_requests_ui(
         farmer &           the_farmer,
         request_generator &generator
     )
@@ -323,13 +323,13 @@ namespace fmk {namespace ui {
                     break;
                 }
                 case 2: {
-                    display_request(generator.get_request_1());
-                    display_request(generator.get_request_2());
-                    display_request(generator.get_request_3());
+                    print_request_display_element(generator.get_request_1());
+                    print_request_display_element(generator.get_request_2());
+                    print_request_display_element(generator.get_request_3());
                     break;
                 }
                 case 3: {
-                    request_fetching_ui(the_farmer, generator);
+                    print_request_fetching_ui(the_farmer, generator);
                     break;
                 }
                 default: {
@@ -340,7 +340,7 @@ namespace fmk {namespace ui {
     }
 
     auto
-    request_validation_note(
+    print_request_validation_note_element(
         const std::pair<request_kind, std::pair<double, int>> &request
     )
         -> bool {
@@ -358,7 +358,7 @@ namespace fmk {namespace ui {
     }
 
     auto
-    request_fetching_ui(
+    print_request_fetching_ui(
         farmer &           the_farmer,
         request_generator &generator
     )
@@ -384,27 +384,27 @@ namespace fmk {namespace ui {
                 case 1: {
                     std::pair<request_kind, std::pair<double, int>> &request =
                         generator.get_request_1();
-                    const bool can_access = request_validation_note(request);
+                    const bool can_access = print_request_validation_note_element(request);
                     if (can_access) {
-                        request_fulfilment_ui(the_farmer, request);
+                        print_request_fulfilment_ui(the_farmer, request);
                     }
                     break;
                 }
                 case 2: {
                     std::pair<request_kind, std::pair<double, int>> &request =
                         generator.get_request_2();
-                    const bool can_access = request_validation_note(request);
+                    const bool can_access = print_request_validation_note_element(request);
                     if (can_access) {
-                        request_fulfilment_ui(the_farmer, request);
+                        print_request_fulfilment_ui(the_farmer, request);
                     }
                     break;
                 }
                 case 3: {
                     std::pair<request_kind, std::pair<double, int>> &request =
                         generator.get_request_3();
-                    const bool can_access = request_validation_note(request);
+                    const bool can_access = print_request_validation_note_element(request);
                     if (can_access) {
-                        request_fulfilment_ui(the_farmer, request);
+                        print_request_fulfilment_ui(the_farmer, request);
                     }
                     break;
                 }
@@ -415,7 +415,7 @@ namespace fmk {namespace ui {
     }
 
     auto
-    request_fulfilment_ui(
+    print_request_fulfilment_ui(
         farmer &                                         the_farmer,
         std::pair<request_kind, std::pair<double, int>> &request
     )
@@ -423,7 +423,7 @@ namespace fmk {namespace ui {
         divider();
         switch (request.first) {
             case request_kind::STRAWBERRY: {
-                request_transfer_ui(
+                print_request_transfer_ui(
                     the_farmer,
                     the_farmer.get_strawberry_farm(),
                     request
@@ -431,7 +431,7 @@ namespace fmk {namespace ui {
                 break;
             }
             case request_kind::ELDERBERRY: {
-                request_transfer_ui(
+                print_request_transfer_ui(
                     the_farmer,
                     the_farmer.get_elderberry_farm(),
                     request
@@ -439,7 +439,7 @@ namespace fmk {namespace ui {
                 break;
             }
             case request_kind::WATERMELON: {
-                request_transfer_ui(
+                print_request_transfer_ui(
                     the_farmer,
                     the_farmer.get_watermelon_farm(),
                     request
@@ -461,7 +461,7 @@ namespace fmk {namespace ui {
     }
 
     auto
-    crop_growth_purchase_ui()
+    print_crop_growth_params_ui()
         -> std::pair<int, double> {
         bool   valid_water = false;
         bool   valid_days  = false;

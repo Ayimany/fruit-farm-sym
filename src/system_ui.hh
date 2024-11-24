@@ -9,112 +9,191 @@ namespace fmk {
 }
 
 namespace fmk { namespace ui {
+    /**
+     * Shorhthand to print a newline
+     */
     auto
     newline()
         -> void;
 
+    /**
+     * Shorthand to print a pretty user prompt
+     */
     auto
     userprompt()
         -> void;
 
+    /**
+     * Shorthand to print a pretty divider
+     */
     auto
     divider()
         -> void;
 
+    /**
+     * Welcomes the farmer
+     */
     auto
     print_welcome()
         -> void;
 
+    /**
+     * Prints a farmer's information
+     * @param the_farmer The farmer to print the info of
+     */
     auto
     print_farmer_data(
         const farmer &the_farmer
     )
         -> void;
 
+    /**
+     * A UI to fast-forward time
+     * @param the_farmer The farmer
+     * @param generator The request generator
+     */
     auto
-    ff_ui(
+    print_fast_forward_ui(
         farmer &           the_farmer,
         request_generator &generator
     )
         -> void;
 
+    /**
+     * Prints the main menu
+     * @param the_farmer The farmer
+     * @return The user's choice
+     */
     auto
-    menu_ui(
+    print_menu_ui(
         const farmer &the_farmer
     )
         -> int;
 
+    /**
+     * Asks the user if they would like to confirm a purchase
+     * @param the_farmer The farmer
+     * @param amt The amount of money
+     * @return Whether the user has enough money and accepts
+     */
     auto
-    confirm_purchase_ui(
+    print_purchase_confirmation_ui(
         const farmer &the_farmer,
         double        amt
     )
         -> bool;
 
+    /**
+     * Prints the shop UI
+     * @param the_farmer The farmer
+     */
     auto
-    shop_ui(
+    print_shop_ui(
         farmer &the_farmer
     )
         -> void;
 
+    /**
+     * Displays the information of a request
+     * @param request The request
+     */
     auto
-    display_request(
+    print_request_display_element(
         const std::pair<request_kind, std::pair<double, int>> &request
     )
         -> void;
 
+    /**
+     * Prints the request management UI
+     * @param the_farmer The farmer
+     * @param generator The request generator
+     */
     auto
-    requests_ui(
+    print_requests_ui(
         farmer &           the_farmer,
         request_generator &generator
     )
         -> void;
 
+    /**
+     * Prints the UI to choose a request
+     * @param the_farmer The farmer
+     * @param generator The request generator
+     */
     auto
-    request_fetching_ui(
+    print_request_fetching_ui(
         farmer &           the_farmer,
         request_generator &generator
     )
         -> void;
 
+    /**
+     * Checks if this request is still valid
+     * @param request The request
+     * @return Whether the request is valid
+     */
     auto
-    request_validation_note(
+    print_request_validation_note_element(
         const std::pair<request_kind, std::pair<double, int>> &request
     )
         -> bool;
 
+    /**
+     * Intermediate UI to where to user can fill a request
+     * @param the_farmer The farmer
+     * @param request The request
+     */
     auto
-    request_fulfilment_ui(
+    print_request_fulfilment_ui(
         farmer &                                         the_farmer,
         std::pair<request_kind, std::pair<double, int>> &request
     )
         -> void;
 
+    /**
+     * UI where to user can fill a request
+     * @param the_farmer The farmer
+     * @param farm The farm
+     * @param request The request
+     */
     template <typename fruit_type_t>
     auto
-    request_transfer_ui(
+    print_request_transfer_ui(
         farmer &                                         the_farmer,
         fruit_farm<fruit_type_t> &                       farm,
         std::pair<request_kind, std::pair<double, int>> &request
     )
         -> void;
 
+    /**
+     * UI for the user to enter days and water units for a crop
+     * @return The days and water units the user chose
+     */
     auto
-    crop_growth_purchase_ui()
+    print_crop_growth_params_ui()
         -> std::pair<int, double>;
 
+    /**
+     * Prints a farm management UI
+     * @tparam fruit_type_t The type of fruit
+     * @param name The name of the crop
+     * @param the_farmer The farmer
+     * @param farm The farm
+     */
     template <typename fruit_type_t>
     auto
-    generic_farm_ui(
+    print_generic_farm_ui(
         std::string const &       name,
         farmer &                  the_farmer,
         fruit_farm<fruit_type_t> &farm
     )
-        -> int;
+        -> void;
+
+    // IMPLEMENTATIONS OF TEMPLATED UIs AHEAD //
 
     template <typename fruit_type_t>
     auto
-    request_transfer_ui(
+    print_request_transfer_ui(
         farmer &                                         the_farmer,
         fruit_farm<fruit_type_t> &                       farm,
         std::pair<request_kind, std::pair<double, int>> &request
@@ -165,12 +244,12 @@ namespace fmk { namespace ui {
 
     template <typename fruit_type_t>
     auto
-    generic_farm_ui(
+    print_generic_farm_ui(
         std::string const &       name,
         farmer &                  the_farmer,
         fruit_farm<fruit_type_t> &farm
     )
-        -> int {
+        -> void {
         int choice;
         do {
             divider();
@@ -193,12 +272,12 @@ namespace fmk { namespace ui {
                 }
                 case 2: {
                     const std::pair<int, double> growth_data =
-                        crop_growth_purchase_ui();
+                        print_crop_growth_params_ui();
 
                     const double water_cost =
                         growth_data.second * constants::COST_PER_WATER_UNIT;
 
-                    const bool will_buy = confirm_purchase_ui(
+                    const bool will_buy = print_purchase_confirmation_ui(
                         the_farmer,
                         water_cost
                     );
@@ -220,8 +299,6 @@ namespace fmk { namespace ui {
                 }
             }
         } while (choice != 0);
-
-        return choice;
     }
 }}
 

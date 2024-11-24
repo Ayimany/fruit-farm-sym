@@ -67,6 +67,7 @@ namespace fmk { namespace calc {
             return 0.0;
         }
 
-        return fruit.get_weight() / (fruit.get_days_to_full_growth() + 1);
+        return fruit.get_weight() / (fruit.get_days_to_full_growth() + 1) +
+               fruit.get_quality_factor() * constants::QUALITY_BONUS;
     }
 }}

@@ -8,6 +8,10 @@
 #include "fruit.hh"
 
 namespace fmk {
+    /**
+     * Represents a fruit farm in which fruit can be grown
+     * @tparam fruit_type_t The type of fruit to grow
+     */
     template <typename fruit_type_t>
     class fruit_farm {
         static_assert(
@@ -16,13 +20,23 @@ namespace fmk {
         );
 
     public:
+        /**
+         * Constructs a fruit farm object
+         */
         fruit_farm()
-            : _storage()
-            , _fruit_count(0) {
+            : _storage { }
+            , _fruit_count { 0 } {
         }
 
+        /**
+         * Destroys the fruit farm object
+         */
         virtual ~fruit_farm() = default;
 
+        /**
+         * Ticks time forward
+         * @param days The amount of days
+         */
         void
         tick(int const days) {
             for (auto &f : _storage) {
@@ -30,6 +44,11 @@ namespace fmk {
             }
         }
 
+        /**
+         * Grows a new fruit
+         * @param days_to_grow The amount of days it will grow for
+         * @param water_units The amount of water that will be given to it
+         */
         void
         grow_fruit(const int days_to_grow, double water_units) {
             static_assert(
@@ -41,9 +60,13 @@ namespace fmk {
 
             _storage.at(_fruit_count) = std::move(fruit);
             _fruit_count++;
-            std::cout << "!";
         }
 
+        /**
+         * Sells a fruit
+         * @param index The index of the fruit to sell and consequently remove
+         * @return The cash generated in the transaction
+         */
         double
         sell_fruit(const size_t index) {
             fruit_type_t &fruit = _storage.at(index);
@@ -54,6 +77,11 @@ namespace fmk {
             return price * get_fruit_price_factor();
         }
 
+        /**
+         * Returns a fruit from the fruit storage
+         * @param index The index of the fruit
+         * @return The fruit
+         */
         [[nodiscard]] auto
         get_fruit(
             size_t index
@@ -62,6 +90,9 @@ namespace fmk {
             return _storage.at(index);
         }
 
+        /**
+         * Removes all ill-cared-for or spoiled fruit
+         */
         void
         remove_ill_fruit() {
             std::array<fruit_type_t, 128> fruits;
@@ -77,16 +108,27 @@ namespace fmk {
             _storage     = fruits;
         }
 
+        /**
+         * Checks whether more fruit can be added
+         * @return If more fruit can be added
+         */
         bool
         can_add_more_fruit() const {
             return _fruit_count < _storage.size();
         }
 
+        /**
+         * Returns the amount of fruit in the farm
+         * @return The amount of fruit in the farm
+         */
         size_t
         get_fruit_count() const {
             return _fruit_count;
         }
 
+        /**
+         * Prints all fruit currently inhabiting this farm
+         */
         void
         print_fruit() const {
             printf("There are %lu fruits\n\n", _fruit_count);
@@ -97,14 +139,25 @@ namespace fmk {
         }
 
     protected:
+        /// The fruit storage
         std::array<fruit_type_t, 128> _storage;
-        size_t                        _fruit_count;
 
+        /// Used to keep track of the valid fruits in storage
+        size_t _fruit_count;
+
+        /**
+         * Returns a specific price multiplier per fruit
+         * @return The price factor of this fruit
+         */
         [[nodiscard]] virtual auto
         get_fruit_price_factor() const noexcept
             -> double = 0;
 
     private:
+        /**
+         * Removes a fruit from the fruit storage
+         * @param index The fruit to remove
+         */
         auto
         remove_fruit(
             const size_t index
@@ -125,6 +178,10 @@ namespace fmk {
 
     class strawberry_farm final : public fruit_farm<strawberry> {
     protected:
+        /**
+         * Returns the price factor for a strawberry
+         * @return the price factor for a strawberry
+         */
         [[nodiscard]] auto
         get_fruit_price_factor() const noexcept
             -> double override;
@@ -132,6 +189,10 @@ namespace fmk {
 
     class elderberry_farm final : public fruit_farm<elderberry> {
     protected:
+        /**
+         * Returns the price factor for an elderberry
+         * @return the price factor for an elderberry
+         */
         [[nodiscard]] auto
         get_fruit_price_factor() const noexcept
             -> double override;
@@ -139,6 +200,10 @@ namespace fmk {
 
     class watermelon_farm final : public fruit_farm<watermelon> {
     protected:
+        /**
+         * Returns the price factor for a watermelon
+         * @return the price factor for a watermelon
+         */
         [[nodiscard]] auto
         get_fruit_price_factor() const noexcept
             -> double override;

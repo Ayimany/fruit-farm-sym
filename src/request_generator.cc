@@ -48,9 +48,9 @@ namespace fmk {
     }
 
     request_generator::request_generator()
-        : _req_1(request_kind::STRAWBERRY, { 0, 0 })
-        , _req_2(request_kind::STRAWBERRY, { 0, 0 })
-        , _req_3(request_kind::STRAWBERRY, { 0, 0 }) {
+        : _req_1 { request_kind::STRAWBERRY, { 0, 0 } }
+        , _req_2 { request_kind::STRAWBERRY, { 0, 0 } }
+        , _req_3 { request_kind::STRAWBERRY, { 0, 0 } } {
     }
 
     auto

@@ -2,10 +2,10 @@
 
 namespace fmk {
     farmer::farmer(const double starting_cash)
-        : _money(starting_cash)
-        , _has_elderberry_farm(false)
-        , _has_watermelon_farm(false)
-        , _is_best_farmer(false) {
+        : _money { starting_cash }
+        , _has_elderberry_farm { false }
+        , _has_watermelon_farm { false }
+        , _is_best_farmer { false } {
     }
 
     auto
