@@ -58,10 +58,19 @@ namespace fmk {
         get_watermelon_farm()
             -> watermelon_farm &;
 
+        auto
+        is_best_farmer() const
+            -> bool;
+
+        auto
+        become_best_farmer()
+            -> void;
+
     private:
         double _money;
         bool   _has_elderberry_farm;
         bool   _has_watermelon_farm;
+        bool   _is_best_farmer;
 
         strawberry_farm _strawberry_farm;
         elderberry_farm _elderberry_farm;

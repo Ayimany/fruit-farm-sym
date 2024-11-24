@@ -67,6 +67,12 @@ namespace fmk {namespace ui {
             util::bool_to_affirmation(the_farmer.has_watermelon_farm()).c_str()
         );
 
+        puts(
+            the_farmer.is_best_farmer()
+                ? "You are currently NOT the best farmer :("
+                : "You ARE the best farmer! :)"
+        );
+
         divider();
     }
 
@@ -167,11 +173,83 @@ namespace fmk {namespace ui {
 
     auto
     shop_ui(
-        const farmer &farmer
+        farmer &the_farmer
     )
         -> void {
         puts("Welcome to the shop!");
         puts("What will you buy?");
+
+        int vindex = 1;
+
+        int choice;
+        do {
+            std::cin >> choice;
+
+            if (!the_farmer.has_elderberry_farm()) {
+                printf(
+                    "%d) Elderberry Farm: $%.2f",
+                    vindex++,
+                    ELDERBERRY_FARM_COST
+                );
+            }
+
+            if (!the_farmer.has_watermelon_farm()) {
+                printf(
+                    "%d) Watermelon Farm: $%.2f",
+                    vindex++,
+                    WATERMELON_FARM_COST
+                );
+            }
+
+            if (!the_farmer.is_best_farmer()) {
+                printf(
+                    "%d) BEST_FARMER_TITLE: $%.2f",
+                    vindex++,
+                    BEST_FARMER_COST
+                );
+            }
+
+            switch (choice) {
+                case 1: {
+                    const bool will_buy = confirm_purchase_ui(
+                        the_farmer,
+                        ELDERBERRY_FARM_COST
+                    );
+
+                    if (will_buy) {
+                        the_farmer.enable_elderberry_farm();
+                    }
+                    break;
+                }
+
+                case 2: {
+                    const bool will_buy = confirm_purchase_ui(
+                        the_farmer,
+                        WATERMELON_FARM_COST
+                    );
+
+                    if (will_buy) {
+                        the_farmer.enable_watermelon_farm();
+                    }
+                    break;
+                }
+
+                case 3: {
+                    const bool will_buy = confirm_purchase_ui(
+                        the_farmer,
+                        BEST_FARMER_COST
+                    );
+
+                    if (will_buy) {
+                        the_farmer.become_best_farmer();
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        } while (choice != 0);
     }
 
     auto

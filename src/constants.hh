@@ -20,6 +20,10 @@ namespace fmk {
 
     constexpr double ILL_WEIGHT_RATIO = 1.0 / 5.0;
     constexpr double ILL_WATER_RATIO  = 3;
+
+    constexpr double ELDERBERRY_FARM_COST = 1000.0;
+    constexpr double WATERMELON_FARM_COST = 12000.0;
+    constexpr double BEST_FARMER_COST     = 100000.0;
 }
 
 #endif //CONSTANTS_HH

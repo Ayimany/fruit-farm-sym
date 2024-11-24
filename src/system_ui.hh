@@ -46,7 +46,7 @@ namespace fmk { namespace ui {
 
     auto
     shop_ui(
-        const farmer &farmer
+        const farmer &the_farmer
     )
         -> void;
 

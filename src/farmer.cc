@@ -4,7 +4,8 @@ namespace fmk {
     farmer::farmer(const double starting_cash)
         : _money(starting_cash)
         , _has_elderberry_farm(false)
-        , _has_watermelon_farm(false) {
+        , _has_watermelon_farm(false)
+        , _is_best_farmer(false) {
     }
 
     auto
@@ -79,5 +80,17 @@ namespace fmk {
     farmer::get_watermelon_farm()
         -> watermelon_farm & {
         return _watermelon_farm;
+    }
+
+    auto
+    farmer::is_best_farmer() const
+        -> bool {
+        return _is_best_farmer;
+    }
+
+    auto
+    farmer::become_best_farmer()
+        -> void {
+        _is_best_farmer = true;
     }
 }

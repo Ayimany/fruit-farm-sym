@@ -7,9 +7,6 @@ main() {
     fmk::ui::print_welcome();
     fmk::farmer farmer(fmk::FARMER_STARTING_CASH);
 
-    farmer.enable_elderberry_farm();
-    farmer.enable_watermelon_farm();
-
     int choice;
     do {
         choice = fmk::ui::menu_ui(farmer);
