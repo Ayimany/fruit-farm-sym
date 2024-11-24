@@ -47,9 +47,10 @@ namespace fmk {
         -> bool {
         const auto   growth_real  = static_cast<double>(grow);
         const double biased_water = weight * growth_real;
-        const double ratio        = biased_water / weight;
+        const double water_ratio  = biased_water / weight;
+        const double weight_ratio = biased_water / weight;
 
-        return ratio > ILL_WATER_RATIO || ratio < ILL_WEIGHT_RATIO;
+        return water_ratio > ILL_WATER_RATIO || weight_ratio < ILL_WEIGHT_RATIO;
     }
 
     fruit::fruit()

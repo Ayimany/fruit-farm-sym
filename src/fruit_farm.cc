@@ -53,12 +53,12 @@ namespace fmk {
         const double weight = calculate_fruit_weight(
             water_units,
             days_to_grow,
-            BANANA_WATER_FACTOR
+            ELDERBERRY_WATER_FACTOR
         );
         const int days_to_spoil = calculate_days_to_spoil(
             days_to_grow,
             weight,
-            BANANA_SPOILAGE_FACTOR
+            ELDERBERRY_SPOILAGE_FACTOR
         );
 
         add_fruit(days_to_grow, days_to_spoil, weight);
@@ -67,7 +67,7 @@ namespace fmk {
     double
     elderberry_farm::calculate_elderberry_price(elderberry const &fruit) const {
         return calculate_generic_fruit_price(fruit) * _cost_inflation *
-               BANANA_PRICE_FACTOR;
+               ELDERBERRY_PRICE_FACTOR;
     }
 
     double

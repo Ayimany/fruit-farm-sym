@@ -74,14 +74,14 @@ namespace fmk {
             std::array<fruit_type_t, 128> fruits;
             int                           count = 0;
 
-            for (auto fruit : _storage) {
+            for (auto &fruit : _storage) {
                 if (!fruit.is_ill()) {
                     fruits.at(count++) = std::move(fruit);
                 }
             }
 
-            _fruit_count -= count - 1;
-            _storage = fruits;
+            _fruit_count = count;
+            _storage     = fruits;
         }
 
         size_t

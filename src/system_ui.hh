@@ -21,7 +21,7 @@ namespace fmk { namespace ui {
 
     auto
     print_farmer_data(
-        farmer &the_farmer
+        const farmer &the_farmer
     )
         -> void;
 

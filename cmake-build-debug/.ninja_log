@@ -1,0 +1,15 @@
+# ninja log v6
+2	467	1732419788575839967	CMakeFiles/fruit_project.dir/src/utility.cc.o	807aa2511fb3ec75
+1	599	1732419788575839967	CMakeFiles/fruit_project.dir/src/fruit.cc.o	bdf8d3ecdfee9445
+2	696	1732419788575839967	CMakeFiles/fruit_project.dir/src/farmer.cc.o	12edbb2dac100253
+1	718	1732419788575839967	CMakeFiles/fruit_project.dir/src/main.cc.o	e35f4202d4eff3e6
+2	756	1732419788575839967	CMakeFiles/fruit_project.dir/src/system_ui.cc.o	d7ea8584b5a443c1
+1	787	1732419788575839967	CMakeFiles/fruit_project.dir/src/fruit_farm.cc.o	88e565c34841ff76
+787	926	1732419789362503320	fruit_project	bdc0b11478f3ecd2
+2	669	1732419919708670046	CMakeFiles/fruit_project.dir/src/fruit.cc.o	bdf8d3ecdfee9445
+670	835	1732419920375334386	fruit_project	bdc0b11478f3ecd2
+2	704	1732420113598073501	CMakeFiles/fruit_project.dir/src/main.cc.o	e35f4202d4eff3e6
+4	718	1732420113598073501	CMakeFiles/fruit_project.dir/src/farmer.cc.o	12edbb2dac100253
+4	861	1732420113598073501	CMakeFiles/fruit_project.dir/src/system_ui.cc.o	d7ea8584b5a443c1
+3	891	1732420113598073501	CMakeFiles/fruit_project.dir/src/fruit_farm.cc.o	88e565c34841ff76
+891	1034	1732420114484737765	fruit_project	bdc0b11478f3ecd2
