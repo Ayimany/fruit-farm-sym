@@ -10,9 +10,9 @@ namespace fmk {
     constexpr int ELDERBERRY_SPOILAGE_FACTOR = 2;
     constexpr int WATERMELON_SPOILAGE_FACTOR = 3;
 
-    constexpr double STRAWBERRY_PRICE_FACTOR = 0.5;
-    constexpr double ELDERBERRY_PRICE_FACTOR = 1;
-    constexpr double WATERMELON_PRICE_FACTOR = 2.0;
+    constexpr double STRAWBERRY_PRICE_FACTOR = 60;
+    constexpr double ELDERBERRY_PRICE_FACTOR = 120;
+    constexpr double WATERMELON_PRICE_FACTOR = 240;
 
     constexpr double FARMER_STARTING_CASH = 100.0;
 
@@ -32,6 +32,7 @@ namespace fmk {
     constexpr double MAX_REQUEST_WEIGHT = 100.0;
 
     constexpr double SUCCESSFUL_REQUEST_BONUS = 500.0;
+    constexpr double QUALITY_BONUS            = 15.0;
 }
 
 #endif //CONSTANTS_HH

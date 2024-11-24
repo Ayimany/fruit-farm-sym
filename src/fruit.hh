@@ -100,6 +100,7 @@ namespace fmk {
         int         _days_left_to_grow;
         int         _days_left_to_spoil;
         double      _weight;
+        double      _quality_bonus;
         bool        _incorrect_care;
     };
 

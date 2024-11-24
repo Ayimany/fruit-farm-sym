@@ -66,11 +66,11 @@ namespace fmk {
         const farmer &farmer
     )
         -> void {
-        int max_kind = 1 + (farmer.has_elderberry_farm()
-                                ? 1
-                                : 0) + (farmer.has_watermelon_farm()
-                                            ? 1
-                                            : 0);
+        const int max_kind = 1 + (farmer.has_elderberry_farm()
+                                      ? 1
+                                      : 0) + (farmer.has_watermelon_farm()
+                                                  ? 1
+                                                  : 0);
 
         std::random_device dev { };
         std::mt19937       gen { dev() };

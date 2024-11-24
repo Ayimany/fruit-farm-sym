@@ -30,6 +30,7 @@ namespace fmk {namespace ui {
     auto
     print_welcome()
         -> void {
+        divider();
         puts("Welcome, farmer!");
         newline();
         puts("You have been tasked with the development of three key farms:");
@@ -41,8 +42,6 @@ namespace fmk {namespace ui {
         puts("Your customers can grow tired, so don't keep them waiting!");
         puts("Your goal is to earn enough to buy the title of 'Best Farmer'.");
         puts("Good luck!");
-
-        divider();
     }
 
     auto
@@ -50,6 +49,8 @@ namespace fmk {namespace ui {
         const farmer &the_farmer
     )
         -> void {
+        divider();
+
         puts("Farmer, here is your information:");
         printf("- Cash: $%.2f\n", the_farmer.get_money());
 
@@ -73,15 +74,16 @@ namespace fmk {namespace ui {
                 ? "You ARE the best farmer! :)"
                 : "You are currently NOT the best farmer :("
         );
-
-        divider();
     }
 
     auto
     ff_ui(
-        farmer &the_farmer
+        farmer &           the_farmer,
+        request_generator &generator
     )
         -> void {
+        divider();
+
         int days;
         do {
             puts("How many days?");
@@ -96,11 +98,10 @@ namespace fmk {namespace ui {
             if (days == 0) {
                 puts("Congratulations. Nothing happened.");
             }
-
-            divider();
         } while (days < 0);
 
         the_farmer.tick(days);
+        generator.tick(days);
     }
 
     auto
@@ -108,6 +109,8 @@ namespace fmk {namespace ui {
         const farmer &the_farmer
     )
         -> int {
+        divider();
+
         const int available_options = 5 + (the_farmer.has_elderberry_farm()
                                                ? 1
                                                : 0) + (
@@ -119,6 +122,7 @@ namespace fmk {namespace ui {
 
         int choice;
         do {
+            divider();
             puts("Please choose an option:");
             puts("0) Exit");
             puts("1) Print stats");
@@ -137,8 +141,6 @@ namespace fmk {namespace ui {
 
             userprompt();
             std::cin >> choice;
-
-            divider();
         } while (choice < 0 || choice > available_options);
 
         return choice;
@@ -150,10 +152,13 @@ namespace fmk {namespace ui {
         const double  amt
     )
         -> bool {
+        divider();
+
         printf("The transaction will cost $%.2f\n", amt);
 
         if (the_farmer.get_money() < amt) {
             puts("You do not have enough money for this.");
+
             return false;
         }
 
@@ -165,8 +170,6 @@ namespace fmk {namespace ui {
 
             userprompt();
             std::cin >> confirmation;
-
-            divider();
         } while (confirmation < 0 || confirmation > 1);
 
         return confirmation == 1;
@@ -177,41 +180,36 @@ namespace fmk {namespace ui {
         farmer &the_farmer
     )
         -> void {
-        puts("Welcome to the shop!");
-        puts("What will you buy?");
-
-        int vindex = 1;
-
         int choice;
         do {
-            std::cin >> choice;
+            divider();
+
+            puts("Welcome to the shop!");
+            puts("What will you buy?");
+            puts("0) Exit");
 
             if (!the_farmer.has_elderberry_farm()) {
-                printf(
-                    "%d) Elderberry Farm: $%.2f",
-                    vindex++,
-                    ELDERBERRY_FARM_COST
-                );
+                printf("1) Elderberry Farm: $%.2f\n", ELDERBERRY_FARM_COST);
             }
 
             if (!the_farmer.has_watermelon_farm()) {
-                printf(
-                    "%d) Watermelon Farm: $%.2f",
-                    vindex++,
-                    WATERMELON_FARM_COST
-                );
+                printf("2) Watermelon Farm: $%.2f\n", WATERMELON_FARM_COST);
             }
 
             if (!the_farmer.is_best_farmer()) {
-                printf(
-                    "%d) BEST_FARMER_TITLE: $%.2f",
-                    vindex++,
-                    BEST_FARMER_COST
-                );
+                printf("3) Best Farmer Title: $%.2f\n", BEST_FARMER_COST);
             }
+            userprompt();
+            std::cin >> choice;
 
             switch (choice) {
                 case 1: {
+                    if (the_farmer.has_elderberry_farm()) {
+                        divider();
+                        puts("You already own this item");
+                        break;
+                    }
+
                     const bool will_buy = confirm_purchase_ui(
                         the_farmer,
                         ELDERBERRY_FARM_COST
@@ -224,6 +222,12 @@ namespace fmk {namespace ui {
                 }
 
                 case 2: {
+                    if (the_farmer.has_watermelon_farm()) {
+                        divider();
+                        puts("You already own this item");
+                        break;
+                    }
+
                     const bool will_buy = confirm_purchase_ui(
                         the_farmer,
                         WATERMELON_FARM_COST
@@ -236,6 +240,12 @@ namespace fmk {namespace ui {
                 }
 
                 case 3: {
+                    if (the_farmer.is_best_farmer()) {
+                        divider();
+                        puts("You are already the best farmer :)");
+                        break;
+                    }
+
                     const bool will_buy = confirm_purchase_ui(
                         the_farmer,
                         BEST_FARMER_COST
@@ -258,17 +268,19 @@ namespace fmk {namespace ui {
         const std::pair<request_kind, std::pair<double, int>> &request
     )
         -> void {
+        divider();
+
         std::string const kind_str        = rkind_to_str(request.first);
         int const         days_to_fulfill = request.second.second;
         bool const        can_fulfill     = days_to_fulfill > 0;
         double const      weight          = request.second.first;
 
-        puts("REQUEST:");
+        puts("Request:");
         printf("* Solicits: %s\n", kind_str.c_str());
         printf("* Weight: %s\n", util::strfmt("%.2f kg", weight).c_str());
 
         if (can_fulfill) {
-            printf("* Days to fulfill: %d", days_to_fulfill);
+            printf("* Days to fulfill: %d\n", days_to_fulfill);
         } else {
             puts("* EXPIRED");
         }
@@ -282,41 +294,42 @@ namespace fmk {namespace ui {
         -> void {
         int choice;
         do {
+            divider();
+
             puts("What would you like to do?");
             puts("0) Exit");
             puts("1) Regenerate requests");
             puts("2) View Requests");
             puts("3) Fulfill Request");
 
+            userprompt();
             std::cin >> choice;
-        } while (choice < 0 || choice > 3);
 
-        divider();
-
-        switch (choice) {
-            case 0: {
-                return;
+            switch (choice) {
+                case 0: {
+                    return;
+                }
+                case 1: {
+                    generator.regenerate_requests(the_farmer);
+                    break;
+                }
+                case 2: {
+                    display_request(generator.get_request_1());
+                    display_request(generator.get_request_2());
+                    display_request(generator.get_request_3());
+                    break;
+                }
+                case 3: {
+                    request_fetching_ui(the_farmer, generator);
+                    break;
+                }
+                default: {
+                    throw std::runtime_error {
+                        "Supposedly unreachable code reached."
+                    };
+                }
             }
-            case 1: {
-                generator.regenerate_requests(the_farmer);
-                break;
-            }
-            case 2: {
-                display_request(generator.get_request_1());
-                display_request(generator.get_request_2());
-                display_request(generator.get_request_3());
-                break;
-            }
-            case 3: {
-                request_fetching_ui(the_farmer, generator);
-                break;
-            }
-            default: {
-                throw std::runtime_error {
-                    "Supposedly unreachable code reached."
-                };
-            }
-        }
+        } while (choice != 0);
     }
 
     auto
@@ -327,16 +340,17 @@ namespace fmk {namespace ui {
         -> void {
         int choice;
         do {
+            divider();
+
             puts("Which request?");
             puts("0) Exit");
             puts("1) Request 1");
             puts("2) Request 2");
             puts("3) Request 3");
 
+            userprompt();
             std::cin >> choice;
         } while (choice < 0 || choice > 3);
-
-        divider();
 
         std::pair<request_kind, std::pair<double, int>> &request = generator.
             get_request_1();
@@ -363,50 +377,64 @@ namespace fmk {namespace ui {
             }
         }
 
-        divider();
-
         if (request.second.second == 0) {
             puts("This request has expired.");
+
             return;
         }
 
-        request_fulfilment_ui(the_farmer, generator, request);
+        request_fulfilment_ui(the_farmer, request);
     }
 
     auto
     request_fulfilment_ui(
         farmer &                                         the_farmer,
-        request_generator &                              generator,
         std::pair<request_kind, std::pair<double, int>> &request
     )
         -> void {
+        divider();
         switch (request.first) {
             case request_kind::STRAWBERRY: {
                 strawberry_farm &farm = the_farmer.get_strawberry_farm();
 
-                const bool has_fruit = farm.get_fruit_count() == 0;
+                const bool has_fruit = farm.get_fruit_count() != 0;
 
                 if (!has_fruit) {
                     puts("You have no strawberries to offer.");
+                    break;
                 }
 
                 farm.print_fruit();
+                divider();
 
                 puts("Which strawberries will you offer? Type their number");
                 puts("Type 0 to stop offering");
 
                 int index;
                 do {
+                    userprompt();
                     std::cin >> index;
+
                     if (index < 0 || index > farm.get_fruit_count()) {
                         puts("Invalid strawberry");
+                        newline();
+                        continue;
                     }
 
                     strawberry &fruit = farm.get_fruit(index);
+
+                    if (!fruit.is_fully_grown() || fruit.is_spoiled()) {
+                        puts("You cannot offer this strawberry!");
+                        newline();
+                        continue;
+                    }
+
                     request.second.first -= fruit.get_weight();
 
                     const double cash = farm.sell_strawberry(index);
                     the_farmer.add_money(cash);
+
+                    printf("* Sold for $%.2f\n", cash);
                 } while (index != 0 && request.second.second > 0);
 
                 break;
@@ -414,30 +442,45 @@ namespace fmk {namespace ui {
             case request_kind::ELDERBERRY: {
                 elderberry_farm &farm = the_farmer.get_elderberry_farm();
 
-                const bool has_fruit = farm.get_fruit_count() == 0;
+                const bool has_fruit = farm.get_fruit_count() != 0;
                 const bool has_farm  = the_farmer.has_elderberry_farm();
 
                 if (!has_fruit || !has_farm) {
                     puts("You have no elderberries to offer.");
+                    break;
                 }
 
                 farm.print_fruit();
+                divider();
 
                 puts("Which elderberries will you offer? Type their number");
                 puts("Type 0 to stop offering");
 
                 int index;
                 do {
+                    userprompt();
                     std::cin >> index;
+
                     if (index < 0 || index > farm.get_fruit_count()) {
-                        puts("Invalid strawberry");
+                        puts("Invalid elderberry");
+                        newline();
+                        continue;
                     }
 
                     elderberry &fruit = farm.get_fruit(index);
+
+                    if (!fruit.is_fully_grown() || fruit.is_spoiled()) {
+                        puts("You cannot offer this elderberry!");
+                        newline();
+                        continue;
+                    }
+
                     request.second.first -= fruit.get_weight();
 
                     const double cash = farm.sell_elderberry(index);
                     the_farmer.add_money(cash);
+
+                    printf("* Sold for $%.2f\n", cash);
                 } while (index != 0 && request.second.second > 0);
 
                 break;
@@ -445,30 +488,45 @@ namespace fmk {namespace ui {
             case request_kind::WATERMELON: {
                 watermelon_farm &farm = the_farmer.get_watermelon_farm();
 
-                const bool has_fruit = farm.get_fruit_count() == 0;
+                const bool has_fruit = farm.get_fruit_count() != 0;
                 const bool has_farm  = the_farmer.has_watermelon_farm();
 
                 if (!has_fruit || !has_farm) {
                     puts("You have no watermelons to offer.");
+                    break;
                 }
 
                 farm.print_fruit();
+                divider();
 
                 puts("Which watermelons will you offer? Type their number");
                 puts("Type 0 to stop offering");
 
                 int index;
                 do {
+                    userprompt();
                     std::cin >> index;
+
                     if (index < 0 || index > farm.get_fruit_count()) {
-                        puts("Invalid strawberry");
+                        puts("Invalid watermelon");
+                        newline();
+                        continue;
                     }
 
                     watermelon &fruit = farm.get_fruit(index);
+
+                    if (!fruit.is_fully_grown() || fruit.is_spoiled()) {
+                        puts("You cannot offer this watermelon!");
+                        newline();
+                        continue;
+                    }
+
                     request.second.first -= fruit.get_weight();
 
                     const double cash = farm.sell_watermelon(index);
                     the_farmer.add_money(cash);
+
+                    printf("* Sold for $%.2f\n", cash);
                 } while (index != 0 && request.second.second > 0);
 
                 break;
@@ -494,6 +552,8 @@ namespace fmk {namespace ui {
         double water_units;
         int    days_to_grow;
 
+        divider();
+
         do {
             puts("How many water units will you add?");
 
@@ -502,10 +562,9 @@ namespace fmk {namespace ui {
 
             if (water_units <= 0) {
                 puts("You need to provide a water amount greater than 0");
+
                 continue;
             }
-
-            divider();
 
             valid_water = true;
         } while (!valid_water);
@@ -518,15 +577,12 @@ namespace fmk {namespace ui {
 
             if (days_to_grow <= 0) {
                 puts("You need to provide an amount of days greater than 0");
+
                 continue;
             }
 
-            newline();
-
             valid_days = true;
         } while (!valid_days);
-
-        divider();
 
         return std::make_pair(water_units, days_to_grow);
     }
@@ -536,10 +592,11 @@ namespace fmk {namespace ui {
         std::string const &name
     )
         -> int {
-        printf("Welcome to the %s farm\n", name.c_str());
-
         int choice;
         do {
+            divider();
+
+            printf("Welcome to the %s farm\n", name.c_str());
             puts("Please choose an option:");
             puts("0) Exit");
             puts("1) Print farm crops");
@@ -548,8 +605,6 @@ namespace fmk {namespace ui {
 
             userprompt();
             std::cin >> choice;
-
-            divider();
         } while (choice < 0 || choice > 3);
 
         return choice;
@@ -567,8 +622,8 @@ namespace fmk {namespace ui {
             choice = generic_farm_ui("strawberry");
             switch (choice) {
                 case 1: {
-                    farm.print_fruit();
                     divider();
+                    farm.print_fruit();
                     break;
                 }
                 case 2: {
@@ -593,6 +648,8 @@ namespace fmk {namespace ui {
                     break;
                 }
                 case 3: {
+                    divider();
+                    puts("All spoiled or ill-cared for fruit is gone.");
                     farm.remove_ill_fruit();
                     break;
                 }
@@ -601,8 +658,6 @@ namespace fmk {namespace ui {
                 }
             }
         } while (choice != 0);
-
-        divider();
     }
 
     auto
@@ -618,7 +673,7 @@ namespace fmk {namespace ui {
             switch (choice) {
                 case 1: {
                     farm.print_fruit();
-                    divider();
+
                     break;
                 }
                 case 2: {
@@ -651,8 +706,6 @@ namespace fmk {namespace ui {
                 }
             }
         } while (choice != 0);
-
-        divider();
     }
 
     auto
@@ -668,7 +721,7 @@ namespace fmk {namespace ui {
             switch (choice) {
                 case 1: {
                     farm.print_fruit();
-                    divider();
+
                     break;
                 }
                 case 2: {
@@ -701,7 +754,5 @@ namespace fmk {namespace ui {
                 }
             }
         } while (choice != 0);
-
-        divider();
     }
 }}

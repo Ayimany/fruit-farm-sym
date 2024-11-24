@@ -5,9 +5,12 @@
 
 int
 main() {
-    fmk::ui::print_welcome();
     fmk::farmer            farmer(fmk::FARMER_STARTING_CASH);
     fmk::request_generator request_generator;
+
+    request_generator.regenerate_requests(farmer);
+
+    fmk::ui::print_welcome();
 
     int choice;
     do {
@@ -20,7 +23,7 @@ main() {
             }
 
             case 2: {
-                fmk::ui::ff_ui(farmer);
+                fmk::ui::ff_ui(farmer, request_generator);
                 break;
             }
 

@@ -32,7 +32,8 @@ namespace fmk { namespace ui {
 
     auto
     ff_ui(
-        farmer &the_farmer
+        farmer &           the_farmer,
+        request_generator &generator
     )
         -> void;
 
@@ -78,7 +79,6 @@ namespace fmk { namespace ui {
     auto
     request_fulfilment_ui(
         farmer &                                         the_farmer,
-        request_generator &                              generator,
         std::pair<request_kind, std::pair<double, int>> &request
     )
         -> void;

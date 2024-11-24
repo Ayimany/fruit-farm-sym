@@ -1,8 +1,8 @@
 #include "fruit.hh"
 
 #include <cmath>
-#include <utility>
 #include <stdexcept>
+#include <utility>
 
 #include "constants.hh"
 #include "utility.hh"
@@ -58,6 +58,7 @@ namespace fmk {
         , _days_left_to_grow(0)
         , _days_left_to_spoil(0)
         , _weight(0.0)
+        , _quality_bonus(0)
         , _incorrect_care(true) {
     }
 
@@ -71,6 +72,7 @@ namespace fmk {
         , _days_left_to_grow(days_until_grown)
         , _days_left_to_spoil(days_until_spoilage)
         , _weight(weight)
+        , _quality_bonus(days_until_grown * QUALITY_BONUS)
         , _incorrect_care(_days_left_to_spoil <= _days_left_to_grow / 2) {
     }
 
@@ -79,11 +81,16 @@ namespace fmk {
         const int days
     )
         -> void {
-        if (_days_left_to_grow == 0) {
-            _days_left_to_spoil = std::max(_days_left_to_spoil - days, 0);
+        int residue = days;
+
+        if (_days_left_to_grow > 0) {
+            residue            = std::max(days - _days_left_to_grow, 0);
+            _days_left_to_grow = std::max(_days_left_to_grow - days, 0);
         }
 
-        _days_left_to_grow = std::max(_days_left_to_grow - days, 0);
+        if (_days_left_to_grow == 0 && residue > 0) {
+            _days_left_to_spoil = std::max(_days_left_to_spoil - residue, 0);
+        }
     }
 
     auto
