@@ -24,6 +24,27 @@ namespace fmk {
         }
     }
 
+    auto
+    int_to_rkind(
+        int const ikind
+    )
+        -> request_kind {
+        switch (ikind) {
+            case 1: {
+                return request_kind::STRAWBERRY;
+            }
+            case 2: {
+                return request_kind::ELDERBERRY;
+            }
+            case 3: {
+                return request_kind::WATERMELON;
+            }
+            default: {
+                throw std::invalid_argument("Invalid request kind");
+            }
+        }
+    }
+
     request_generator::request_generator()
         : _req_1(request_kind::STRAWBERRY, { 0, 0 })
         , _req_2(request_kind::STRAWBERRY, { 0, 0 })

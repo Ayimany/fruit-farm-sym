@@ -13,26 +13,11 @@ namespace fmk {
         WATERMELON
     };
 
-    [[nodiscard]] constexpr auto
+    auto
     int_to_rkind(
-        int const ikind
+        int ikind
     )
-        -> request_kind {
-        switch (ikind) {
-            case 1: {
-                return request_kind::STRAWBERRY;
-            }
-            case 2: {
-                return request_kind::ELDERBERRY;
-            }
-            case 3: {
-                return request_kind::WATERMELON;
-            }
-            default: {
-                throw std::invalid_argument("Invalid request kind");
-            }
-        }
-    }
+        -> request_kind;
 
     auto
     rkind_to_str(
