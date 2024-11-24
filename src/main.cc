@@ -8,8 +8,6 @@ main() {
     fmk::farmer            farmer(fmk::FARMER_STARTING_CASH);
     fmk::request_generator request_generator;
 
-    farmer.get_strawberry_farm().grow_strawberry(6000, 100);
-
     request_generator.regenerate_requests(farmer);
 
     fmk::ui::print_welcome();
