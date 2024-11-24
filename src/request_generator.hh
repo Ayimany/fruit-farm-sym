@@ -14,14 +14,14 @@ namespace fmk {
     };
 
     auto
-    int_to_rkind(
-        int ikind
+    int_to_request_kind(
+        int integer
     )
         -> request_kind;
 
     auto
-    rkind_to_str(
-        request_kind rkind
+    request_kind_to_str(
+        request_kind request_kind
     )
         -> std::string;
 
@@ -38,7 +38,7 @@ namespace fmk {
 
         auto
         regenerate_requests(
-            const farmer &farmer
+            int farmer_level
         )
             -> void;
 

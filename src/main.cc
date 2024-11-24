@@ -5,10 +5,10 @@
 
 int
 main() {
-    fmk::farmer            farmer(fmk::FARMER_STARTING_CASH);
+    fmk::farmer            farmer { fmk::constants::FARMER_STARTING_CASH };
     fmk::request_generator request_generator;
 
-    request_generator.regenerate_requests(farmer);
+    request_generator.regenerate_requests(farmer.get_level());
 
     fmk::ui::print_welcome();
 
@@ -38,17 +38,29 @@ main() {
             }
 
             case 5: {
-                fmk::ui::strawberry_farm_ui(farmer);
+                fmk::ui::generic_farm_ui(
+                    "strawberry",
+                    farmer,
+                    farmer.get_strawberry_farm()
+                );
                 break;
             }
 
             case 6: {
-                fmk::ui::elderberry_farm_ui(farmer);
+                fmk::ui::generic_farm_ui(
+                    "elderberry",
+                    farmer,
+                    farmer.get_elderberry_farm()
+                );
                 break;
             }
 
             case 7: {
-                fmk::ui::watermelon_farm_ui(farmer);
+                fmk::ui::generic_farm_ui(
+                    "watermelon",
+                    farmer,
+                    farmer.get_watermelon_farm()
+                );
                 break;
             }
 

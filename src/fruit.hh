@@ -3,138 +3,183 @@
 
 #include <string>
 
+#include "fruit_descriptor.hh"
+
 namespace fmk {
-    [[nodiscard]] auto
-    calculate_fruit_weight(
-        double water_units,
-        int    days_to_grow,
-        double water_factor
-    ) noexcept
-        -> double;
+    /**
+     * Helper class to facilitate template recognition
+     */
+    struct fruit_base {
+    };
 
-    [[nodiscard]] auto
-    calculate_spoiling_penalty(
-        double weight
-    ) noexcept
-        -> int;
-
-    [[nodiscard]] auto
-    calculate_days_to_spoil(
-        int    days_to_grow,
-        double weight,
-        double spoilage_factor
-    ) noexcept
-        -> int;
-
-    [[nodiscard]] auto
-    is_ill(
-        int    grow,
-        double weight
-    )
-        -> bool;
-
-    template <typename fruit_type_t>
-    [[nodiscard]] auto
-    calculate_generic_fruit_price(
-        fruit_type_t const &fruit
-    ) noexcept
-        -> double {
-        if (fruit.is_spoiled()) {
-            return 0.0;
-        }
-
-        return fruit.get_weight() / (fruit.get_days_to_full_growth() + 1);
-    }
-
-    class fruit {
+    class fruit : public fruit_base {
     public:
+        /**
+         * Constructs a fruit initialized to all zeroes and ill-care
+         */
+        explicit
         fruit();
 
+        /**
+         * Constructs a fruit object
+         * @param name The name of fruit
+         * @param days_until_grown The days it will take the fruit to grow
+         * @param water_units The amount of water units to give the fruit
+         * @param descriptor The provider of a variety of fruit constants
+         */
+        explicit
         fruit(
-            std::string name,
-            int         days_until_grown,
-            int         days_until_spoilage,
-            double      weight
+            std::string             name,
+            int                     days_until_grown,
+            double                  water_units,
+            fruit_descriptor const &descriptor
         );
 
+        /**
+         * Ticks time forward
+         * @param days The amount of days
+         */
         auto
         tick(
             int days
         )
             -> void;
 
+        /**
+         * Returns the name of the fruit
+         * @return The name of the fruit
+         */
         [[nodiscard]] auto
         get_name() const
             -> std::string;
 
+        /**
+         * Returns the days until the fruit is fully grown
+         * @return the days until the fruit is fully grown
+         */
         [[nodiscard]] auto
         get_days_to_full_growth() const
             -> int;
 
-        [[nodiscard]] auto
-        get_days_until_spoiled() const
-            -> int;
-
-        [[nodiscard]] auto
-        get_weight() const
-            -> double;
-
+        /**
+         * Returns whether the fruit is fully grown or not
+         * @return whether the fruit is fully grown or not
+         */
         [[nodiscard]] auto
         is_fully_grown() const
             -> bool;
 
+        /**
+         * Returns the days until the fruit is spoiled
+         * @return the days until the fruit is spoiled
+         */
+        [[nodiscard]] auto
+        get_days_until_spoiled() const
+            -> int;
+
+        /**
+         * Returns whether the fruit is spoiled or not
+         * @return whether the fruit is spoiled or not
+         */
         [[nodiscard]] auto
         is_spoiled() const
             -> bool;
 
+        /**
+         * Returns the weight of the fruit
+         * @return The weight of the fruit
+         */
+        [[nodiscard]] auto
+        get_weight() const
+            -> double;
+
+        /**
+         * Returns the fruit's quality factor
+         * @return The quality factor
+         */
+        [[nodiscard]] auto
+        get_quality_factor() const
+            -> double;
+
+        /**
+         * Returns whether the fruit is ill or not
+         * @return whether the fruit is ill or not
+         */
         [[nodiscard]] auto
         is_ill() const
             -> bool;
 
+        /**
+         * Returns this fruit, formatted as a string
+         * @return The string-formatted version of the fruit
+         */
         [[nodiscard]] auto
         to_string() const
             -> std::string;
 
     protected:
+        /// The name of the fruit
         std::string _name;
-        int         _days_left_to_grow;
-        int         _days_left_to_spoil;
-        double      _weight;
-        double      _quality_bonus;
-        bool        _incorrect_care;
+
+        /// The weight of the fruit
+        double _weight;
+
+        /// The days left to fully grow
+        int _days_left_to_grow;
+
+        /// The days left to spoil
+        int _days_left_to_spoil;
+
+        /// A factor that will influence the cost of this fruit
+        double _quality_factor;
+
+        /// Determines if this fruit was incorrectly cared for
+        bool _incorrect_care;
     };
 
     class strawberry : public fruit {
     public:
+        /**
+         * Constructs a strawberry initialized to all zeroes and ill-care
+         */
         strawberry();
 
-        strawberry(
-            int    days_until_grown,
-            int    days_until_spoilage,
-            double weight
-        );
+        /**
+         * Constructs a strawberry object
+         * @param days_until_grown The days it will take the fruit to grow
+         * @param water_units The amount of water units to give the fruit
+         */
+        strawberry(int days_until_grown, double water_units);
     };
 
     class elderberry : public fruit {
     public:
+        /**
+         * Constructs an elderberry initialized to all zeroes and ill-care
+         */
         elderberry();
 
-        elderberry(
-            int    days_until_grown,
-            int    days_until_spoilage,
-            double weight
-        );
+        /**
+         * Constructs an elderberry object
+         * @param days_until_grown The days it will take the fruit to grow
+         * @param water_units The amount of water units to give the fruit
+         */
+        elderberry(int days_until_grown, double water_units);
     };
 
     class watermelon : public fruit {
     public:
+        /**
+         * Constructs a watermelon initialized to all zeroes and ill-care
+         */
         watermelon();
 
-        watermelon(
-            int    days_until_grown,
-            int    days_until_spoilage,
-            double weight
-        );
+        /**
+         * Constructs a watermelon object
+         * @param days_until_grown The days it will take the fruit to grow
+         * @param water_units The amount of water units to give the fruit
+         */
+        watermelon(int days_until_grown, double water_units);
     };
 }
 

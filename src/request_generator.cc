@@ -7,11 +7,11 @@
 
 namespace fmk {
     auto
-    rkind_to_str(
-        const request_kind rkind
+    request_kind_to_str(
+        const request_kind request_kind
     )
         -> std::string {
-        switch (rkind) {
+        switch (request_kind) {
             case request_kind::STRAWBERRY: {
                 return "strawberry";
             }
@@ -23,15 +23,15 @@ namespace fmk {
             }
         }
 
-        throw std::runtime_error { "Unknown request kind" };
+        throw std::runtime_error { "Invalid request kind" };
     }
 
     auto
-    int_to_rkind(
-        int const ikind
+    int_to_request_kind(
+        int const integer
     )
         -> request_kind {
-        switch (ikind) {
+        switch (integer) {
             case 1: {
                 return request_kind::STRAWBERRY;
             }
@@ -42,7 +42,7 @@ namespace fmk {
                 return request_kind::WATERMELON;
             }
             default: {
-                throw std::invalid_argument("Invalid request kind");
+                throw std::invalid_argument { "Invalid request kind" };
             }
         }
     }
@@ -65,14 +65,10 @@ namespace fmk {
 
     auto
     request_generator::regenerate_requests(
-        const farmer &farmer
+        const int farmer_level
     )
         -> void {
-        const int max_kind = 1 + (farmer.has_elderberry_farm()
-                                      ? 1
-                                      : 0) + (farmer.has_watermelon_farm()
-                                                  ? 1
-                                                  : 0);
+        const int max_kind = farmer_level;
 
         std::random_device dev { };
         std::mt19937       gen { dev() };
@@ -80,27 +76,27 @@ namespace fmk {
         std::uniform_int_distribution<int> kind_dist { 1, max_kind };
 
         std::uniform_int_distribution<int> day_dist {
-            MIN_REQUEST_DAYS,
-            MAX_REQUEST_DAYS
+            constants::MIN_REQUEST_DAYS,
+            constants::MAX_REQUEST_DAYS
         };
 
         std::uniform_real_distribution<double> weight_dist {
-            MIN_REQUEST_DAYS,
-            MAX_REQUEST_WEIGHT
+            constants::MIN_REQUEST_DAYS,
+            constants::MAX_REQUEST_WEIGHT
         };
 
         _req_1 = std::make_pair(
-            int_to_rkind(kind_dist(gen)),
+            int_to_request_kind(kind_dist(gen)),
             std::make_pair(weight_dist(gen), day_dist(gen))
         );
 
         _req_2 = std::make_pair(
-            int_to_rkind(kind_dist(gen)),
+            int_to_request_kind(kind_dist(gen)),
             std::make_pair(weight_dist(gen), day_dist(gen))
         );
 
         _req_3 = std::make_pair(
-            int_to_rkind(kind_dist(gen)),
+            int_to_request_kind(kind_dist(gen)),
             std::make_pair(weight_dist(gen), day_dist(gen))
         );
     }

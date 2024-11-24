@@ -9,7 +9,6 @@ add_executable(fruit_project src/main.cc
         src/fruit_farm.cc
         src/fruit_farm.hh
         src/constants.hh
-        src/dynamic_array.hh
         src/utility.hh
         src/system_ui.cc
         src/system_ui.hh
@@ -18,4 +17,8 @@ add_executable(fruit_project src/main.cc
         src/utility.cc
         src/request_generator.cc
         src/request_generator.hh
+        src/calculations.hh
+        src/calculations.cc
+        src/fruit_descriptor.cc
+        src/fruit_descriptor.hh
 )

@@ -13,9 +13,10 @@ namespace fmk {
         const int days
     )
         -> void {
-        get_strawberry_farm().tick(days);
-        get_elderberry_farm().tick(days);
-        get_watermelon_farm().tick(days);
+        // Tick all farms
+        _strawberry_farm.tick(days);
+        _elderberry_farm.tick(days);
+        _watermelon_farm.tick(days);
     }
 
     auto
@@ -80,6 +81,16 @@ namespace fmk {
     farmer::get_watermelon_farm()
         -> watermelon_farm & {
         return _watermelon_farm;
+    }
+
+    auto
+    farmer::get_level() const noexcept
+        -> int {
+        return 1 + (_has_elderberry_farm
+                        ? 1
+                        : 0) + (_has_watermelon_farm
+                                    ? 1
+                                    : 0);
     }
 
     auto

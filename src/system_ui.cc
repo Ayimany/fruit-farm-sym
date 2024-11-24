@@ -188,15 +188,24 @@ namespace fmk {namespace ui {
             puts("0) Exit");
 
             if (!the_farmer.has_elderberry_farm()) {
-                printf("1) Elderberry Farm: $%.2f\n", ELDERBERRY_FARM_COST);
+                printf(
+                    "1) Elderberry Farm: $%.2f\n",
+                    constants::ELDERBERRY_FARM_COST
+                );
             }
 
             if (!the_farmer.has_watermelon_farm()) {
-                printf("2) Watermelon Farm: $%.2f\n", WATERMELON_FARM_COST);
+                printf(
+                    "2) Watermelon Farm: $%.2f\n",
+                    constants::WATERMELON_FARM_COST
+                );
             }
 
             if (!the_farmer.is_best_farmer()) {
-                printf("3) Best Farmer Title: $%.2f\n", BEST_FARMER_COST);
+                printf(
+                    "3) Best Farmer Title: $%.2f\n",
+                    constants::BEST_FARMER_COST
+                );
             }
             userprompt();
             std::cin >> choice;
@@ -211,7 +220,7 @@ namespace fmk {namespace ui {
 
                     const bool will_buy = confirm_purchase_ui(
                         the_farmer,
-                        ELDERBERRY_FARM_COST
+                        constants::ELDERBERRY_FARM_COST
                     );
 
                     if (will_buy) {
@@ -229,7 +238,7 @@ namespace fmk {namespace ui {
 
                     const bool will_buy = confirm_purchase_ui(
                         the_farmer,
-                        WATERMELON_FARM_COST
+                        constants::WATERMELON_FARM_COST
                     );
 
                     if (will_buy) {
@@ -247,7 +256,7 @@ namespace fmk {namespace ui {
 
                     const bool will_buy = confirm_purchase_ui(
                         the_farmer,
-                        BEST_FARMER_COST
+                        constants::BEST_FARMER_COST
                     );
 
                     if (will_buy) {
@@ -269,7 +278,7 @@ namespace fmk {namespace ui {
         -> void {
         divider();
 
-        std::string const kind_str        = rkind_to_str(request.first);
+        std::string const kind_str        = request_kind_to_str(request.first);
         int const         days_to_fulfill = request.second.second;
         bool const        can_fulfill     = days_to_fulfill > 0;
         double const      weight          = request.second.first;
@@ -310,7 +319,7 @@ namespace fmk {namespace ui {
                 }
                 case 1: {
                     the_farmer.tick(3);
-                    generator.regenerate_requests(the_farmer);
+                    generator.regenerate_requests(the_farmer.get_level());
                     break;
                 }
                 case 2: {
@@ -375,26 +384,31 @@ namespace fmk {namespace ui {
                 case 1: {
                     std::pair<request_kind, std::pair<double, int>> &request =
                         generator.get_request_1();
-                    request_validation_note(request);
-                    request_fulfilment_ui(the_farmer, request);
+                    const bool can_access = request_validation_note(request);
+                    if (can_access) {
+                        request_fulfilment_ui(the_farmer, request);
+                    }
                     break;
                 }
                 case 2: {
                     std::pair<request_kind, std::pair<double, int>> &request =
                         generator.get_request_2();
-                    request_validation_note(request);
-                    request_fulfilment_ui(the_farmer, request);
+                    const bool can_access = request_validation_note(request);
+                    if (can_access) {
+                        request_fulfilment_ui(the_farmer, request);
+                    }
                     break;
                 }
                 case 3: {
                     std::pair<request_kind, std::pair<double, int>> &request =
                         generator.get_request_3();
-                    request_validation_note(request);
-                    request_fulfilment_ui(the_farmer, request);
+                    const bool can_access = request_validation_note(request);
+                    if (can_access) {
+                        request_fulfilment_ui(the_farmer, request);
+                    }
                     break;
                 }
                 default: {
-                    continue;
                 }
             }
         } while (choice != 0);
@@ -409,146 +423,27 @@ namespace fmk {namespace ui {
         divider();
         switch (request.first) {
             case request_kind::STRAWBERRY: {
-                strawberry_farm &farm = the_farmer.get_strawberry_farm();
-
-                const bool has_fruit = farm.get_fruit_count() != 0;
-
-                if (!has_fruit) {
-                    puts("You have no strawberries to offer.");
-                    break;
-                }
-
-                farm.print_fruit();
-                divider();
-
-                puts("Which strawberries will you offer? Type their number");
-                puts("Type 0 to stop offering");
-
-                int index;
-                do {
-                    userprompt();
-                    std::cin >> index;
-
-                    if (index <= 0 || index > farm.get_fruit_count()) {
-                        puts("Invalid strawberry");
-                        newline();
-                        continue;
-                    }
-
-                    index--;
-
-                    strawberry &fruit = farm.get_fruit(index);
-
-                    if (fruit.is_spoiled()) {
-                        puts("You cannot offer this strawberry!");
-                        newline();
-                        continue;
-                    }
-
-                    request.second.first -= fruit.get_weight();
-
-                    const double cash = farm.sell_strawberry(index);
-                    the_farmer.add_money(cash);
-
-                    printf("* Sold for $%.2f\n", cash);
-                } while (index != 0 && request.second.second > 0);
-
+                request_transfer_ui(
+                    the_farmer,
+                    the_farmer.get_strawberry_farm(),
+                    request
+                );
                 break;
             }
             case request_kind::ELDERBERRY: {
-                elderberry_farm &farm = the_farmer.get_elderberry_farm();
-
-                const bool has_fruit = farm.get_fruit_count() != 0;
-                const bool has_farm  = the_farmer.has_elderberry_farm();
-
-                if (!has_fruit || !has_farm) {
-                    puts("You have no elderberries to offer.");
-                    break;
-                }
-
-                farm.print_fruit();
-                divider();
-
-                puts("Which elderberries will you offer? Type their number");
-                puts("Type 0 to stop offering");
-
-                int index;
-                do {
-                    userprompt();
-                    std::cin >> index;
-
-                    if (index <= 0 || index > farm.get_fruit_count()) {
-                        puts("Invalid elderberry");
-                        newline();
-                        continue;
-                    }
-
-                    index--;
-
-                    elderberry &fruit = farm.get_fruit(index);
-
-                    if (fruit.is_spoiled()) {
-                        puts("You cannot offer this elderberry!");
-                        newline();
-                        continue;
-                    }
-
-                    request.second.first -= fruit.get_weight();
-
-                    const double cash = farm.sell_elderberry(index);
-                    the_farmer.add_money(cash);
-
-                    printf("* Sold for $%.2f\n", cash);
-                } while (index != 0 && request.second.second > 0);
-
+                request_transfer_ui(
+                    the_farmer,
+                    the_farmer.get_elderberry_farm(),
+                    request
+                );
                 break;
             }
             case request_kind::WATERMELON: {
-                watermelon_farm &farm = the_farmer.get_watermelon_farm();
-
-                const bool has_fruit = farm.get_fruit_count() != 0;
-                const bool has_farm  = the_farmer.has_watermelon_farm();
-
-                if (!has_fruit || !has_farm) {
-                    puts("You have no watermelons to offer.");
-                    break;
-                }
-
-                farm.print_fruit();
-                divider();
-
-                puts("Which watermelons will you offer? Type their number");
-                puts("Type 0 to stop offering");
-
-                int index;
-                do {
-                    userprompt();
-                    std::cin >> index;
-
-                    if (index <= 0 || index > farm.get_fruit_count()) {
-                        puts("Invalid watermelon");
-                        newline();
-                        continue;
-                    }
-
-                    index--;
-
-                    watermelon &fruit = farm.get_fruit(index);
-
-                    if (fruit.is_spoiled()) {
-                        puts("You cannot offer this watermelon!");
-                        newline();
-                        continue;
-                    }
-
-                    request.second.first -= fruit.get_weight();
-
-                    const double cash = farm.sell_watermelon(index);
-                    the_farmer.add_money(cash);
-
-                    printf("* Sold for $%.2f\n", cash);
-                } while (index != 0 && request.second.second > 0);
-
+                request_transfer_ui(
+                    the_farmer,
+                    the_farmer.get_watermelon_farm(),
+                    request
+                );
                 break;
             }
         }
@@ -557,23 +452,37 @@ namespace fmk {namespace ui {
             puts("You have fulfilled this request entirely");
             printf(
                 "You will be awarded an extra $%.2f\n",
-                SUCCESSFUL_REQUEST_BONUS
+                constants::SUCCESSFUL_REQUEST_BONUS
             );
 
             request.second.second = 0.0;
-            the_farmer.add_money(SUCCESSFUL_REQUEST_BONUS);
+            the_farmer.add_money(constants::SUCCESSFUL_REQUEST_BONUS);
         }
     }
 
     auto
     crop_growth_purchase_ui()
-        -> std::pair<double, int> {
+        -> std::pair<int, double> {
         bool   valid_water = false;
         bool   valid_days  = false;
         double water_units;
         int    days_to_grow;
 
         divider();
+
+        do {
+            puts("How many days will you water it for?");
+
+            userprompt();
+            std::cin >> days_to_grow;
+
+            if (days_to_grow <= 0) {
+                puts("You need to provide an amount of days greater than 0");
+                continue;
+            }
+
+            valid_days = true;
+        } while (!valid_days);
 
         do {
             puts("How many water units will you add?");
@@ -590,190 +499,6 @@ namespace fmk {namespace ui {
             valid_water = true;
         } while (!valid_water);
 
-        do {
-            puts("How many days will you water it for?");
-
-            userprompt();
-            std::cin >> days_to_grow;
-
-            if (days_to_grow <= 0) {
-                puts("You need to provide an amount of days greater than 0");
-
-                continue;
-            }
-
-            valid_days = true;
-        } while (!valid_days);
-
-        return std::make_pair(water_units, days_to_grow);
-    }
-
-    auto
-    generic_farm_ui(
-        std::string const &name
-    )
-        -> int {
-        int choice;
-        do {
-            divider();
-
-            printf("Welcome to the %s farm\n", name.c_str());
-            puts("Please choose an option:");
-            puts("0) Exit");
-            puts("1) Print farm crops");
-            printf("2) Grow a %s\n", name.c_str());
-            puts("3) Clear ill crops\n");
-
-            userprompt();
-            std::cin >> choice;
-        } while (choice < 0 || choice > 3);
-
-        return choice;
-    }
-
-    auto
-    strawberry_farm_ui(
-        farmer &the_farmer
-    )
-        -> void {
-        strawberry_farm &farm = the_farmer.get_strawberry_farm();
-
-        int choice;
-        do {
-            choice = generic_farm_ui("strawberry");
-            switch (choice) {
-                case 1: {
-                    divider();
-                    farm.print_fruit();
-                    break;
-                }
-                case 2: {
-                    const std::pair<double, int> growth_data =
-                        crop_growth_purchase_ui();
-
-                    const double water_cost =
-                        growth_data.first * COST_PER_WATER_UNIT;
-
-                    const bool will_buy = confirm_purchase_ui(
-                        the_farmer,
-                        water_cost
-                    );
-
-                    if (will_buy) {
-                        the_farmer.sub_money(water_cost);
-                        farm.grow_strawberry(
-                            growth_data.first,
-                            growth_data.second
-                        );
-                    }
-                    break;
-                }
-                case 3: {
-                    divider();
-                    puts("All spoiled or ill-cared for fruit is gone.");
-                    farm.remove_ill_fruit();
-                    break;
-                }
-                default: {
-                    break;
-                }
-            }
-        } while (choice != 0);
-    }
-
-    auto
-    elderberry_farm_ui(
-        farmer &the_farmer
-    )
-        -> void {
-        elderberry_farm &farm = the_farmer.get_elderberry_farm();
-
-        int choice;
-        do {
-            choice = generic_farm_ui("elderberry");
-            switch (choice) {
-                case 1: {
-                    farm.print_fruit();
-
-                    break;
-                }
-                case 2: {
-                    const std::pair<double, int> growth_data =
-                        crop_growth_purchase_ui();
-
-                    const double water_cost =
-                        growth_data.first * COST_PER_WATER_UNIT;
-
-                    const bool will_buy = confirm_purchase_ui(
-                        the_farmer,
-                        water_cost
-                    );
-
-                    if (will_buy) {
-                        the_farmer.sub_money(water_cost);
-                        farm.grow_elderberry(
-                            growth_data.first,
-                            growth_data.second
-                        );
-                    }
-                    break;
-                }
-                case 3: {
-                    farm.remove_ill_fruit();
-                    break;
-                }
-                default: {
-                    break;
-                }
-            }
-        } while (choice != 0);
-    }
-
-    auto
-    watermelon_farm_ui(
-        farmer &the_farmer
-    )
-        -> void {
-        watermelon_farm &farm = the_farmer.get_watermelon_farm();
-
-        int choice;
-        do {
-            choice = generic_farm_ui("watermelon");
-            switch (choice) {
-                case 1: {
-                    farm.print_fruit();
-
-                    break;
-                }
-                case 2: {
-                    const std::pair<double, int> growth_data =
-                        crop_growth_purchase_ui();
-
-                    const double water_cost =
-                        growth_data.first * COST_PER_WATER_UNIT;
-
-                    const bool will_buy = confirm_purchase_ui(
-                        the_farmer,
-                        water_cost
-                    );
-
-                    if (will_buy) {
-                        the_farmer.sub_money(water_cost);
-                        farm.grow_watermelon(
-                            growth_data.first,
-                            growth_data.second
-                        );
-                    }
-                    break;
-                }
-                case 3: {
-                    farm.remove_ill_fruit();
-                    break;
-                }
-                default: {
-                    break;
-                }
-            }
-        } while (choice != 0);
+        return std::make_pair(days_to_grow, water_units);
     }
 }}

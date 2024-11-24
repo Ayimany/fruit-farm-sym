@@ -4,76 +4,50 @@
 #include <stdexcept>
 #include <utility>
 
-#include "constants.hh"
+#include "calculations.hh"
 #include "utility.hh"
 
 namespace fmk {
-    auto
-    calculate_fruit_weight(
-        const double water_units,
-        const int    days_to_grow,
-        const double water_factor
-    ) noexcept
-        -> double {
-        return (water_factor * water_units) / static_cast<double>(days_to_grow);
-    }
-
-    auto
-    calculate_spoiling_penalty(
-        const double weight
-    ) noexcept
-        -> int {
-        return static_cast<int>(std::round(weight / 2.0));
-    }
-
-    auto
-    calculate_days_to_spoil(
-        const int    days_to_grow,
-        const double weight,
-        double const spoilage_factor
-    ) noexcept
-        -> int {
-        const double penalty = calculate_spoiling_penalty(weight);
-        return static_cast<int>(std::round(
-            spoilage_factor * days_to_grow - penalty
-        ));
-    }
-
-    [[nodiscard]] auto
-    is_ill(
-        const int    grow,
-        const double weight
-    )
-        -> bool {
-        const auto   growth_real  = static_cast<double>(grow);
-        const double biased_water = weight * growth_real;
-        const double water_ratio  = biased_water / weight;
-        const double weight_ratio = biased_water / weight;
-
-        return water_ratio > ILL_WATER_RATIO || weight_ratio < ILL_WEIGHT_RATIO;
-    }
-
     fruit::fruit()
         : _name("Unknown")
+        , _weight(0.0)
         , _days_left_to_grow(0)
         , _days_left_to_spoil(0)
-        , _weight(0.0)
-        , _quality_bonus(0)
+        , _quality_factor(0)
         , _incorrect_care(true) {
     }
 
     fruit::fruit(
-        std::string  name,
-        const int    days_until_grown,
-        const int    days_until_spoilage,
-        const double weight
+        std::string             name,
+        const int               days_until_grown,
+        const double            water_units,
+        fruit_descriptor const &descriptor
     )
         : _name(std::move(name))
+        , _weight(
+            calc::fruit_weight(
+                days_until_grown,
+                water_units,
+                descriptor.get_weight_factor(),
+                descriptor.get_water_factor()
+            )
+        )
         , _days_left_to_grow(days_until_grown)
-        , _days_left_to_spoil(days_until_spoilage)
-        , _weight(weight)
-        , _quality_bonus(days_until_grown * QUALITY_BONUS)
-        , _incorrect_care(_days_left_to_spoil <= _days_left_to_grow / 2) {
+        , _days_left_to_spoil(
+            calc::days_to_spoil(
+                _days_left_to_grow,
+                _weight,
+                descriptor.get_spoiling_factor()
+            )
+        )
+        , _quality_factor(calc::fruit_quality(days_until_grown, water_units))
+        , _incorrect_care(
+            calc::ill_status(
+                days_until_grown,
+                water_units,
+                descriptor.get_ill_ratio_bounds()
+            )
+        ) {
     }
 
     auto
@@ -106,9 +80,21 @@ namespace fmk {
     }
 
     auto
+    fruit::is_fully_grown() const
+        -> bool {
+        return this->_days_left_to_grow == 0;
+    }
+
+    auto
     fruit::get_days_until_spoiled() const
         -> int {
         return this->_days_left_to_spoil;
+    }
+
+    auto
+    fruit::is_spoiled() const
+        -> bool {
+        return this->_days_left_to_spoil == 0;
     }
 
     auto
@@ -118,15 +104,9 @@ namespace fmk {
     }
 
     auto
-    fruit::is_fully_grown() const
-        -> bool {
-        return this->_days_left_to_grow == 0;
-    }
-
-    auto
-    fruit::is_spoiled() const
-        -> bool {
-        return this->_days_left_to_spoil == 0;
+    fruit::get_quality_factor() const
+        -> double {
+        return _quality_factor;
     }
 
     auto
@@ -155,38 +135,41 @@ namespace fmk {
     }
 
     strawberry::strawberry()
-        : strawberry(0, 0, 0) {
+        : strawberry(0, 0) {
     }
 
-    strawberry::strawberry(
-        int const    days_until_grown,
-        int const    days_until_spoilage,
-        double const weight
-    )
-        : fruit("Strawberry", days_until_grown, days_until_spoilage, weight) {
+    strawberry::strawberry(const int days_until_grown, const double water_units)
+        : fruit(
+            "Strawberry",
+            days_until_grown,
+            water_units,
+            strawberry_descriptor { }
+        ) {
     }
 
     elderberry::elderberry()
-        : elderberry(0, 0, 0) {
+        : elderberry(0, 0) {
     }
 
-    elderberry::elderberry(
-        int const    days_until_grown,
-        int const    days_until_spoilage,
-        double const weight
-    )
-        : fruit("Elderberry", days_until_grown, days_until_spoilage, weight) {
+    elderberry::elderberry(const int days_until_grown, const double water_units)
+        : fruit(
+            "Elderberry",
+            days_until_grown,
+            water_units,
+            elderberry_descriptor { }
+        ) {
     }
 
     watermelon::watermelon()
-        : watermelon(0, 0, 0) {
+        : watermelon(0, 0) {
     }
 
-    watermelon::watermelon(
-        int const    days_until_grown,
-        int const    days_until_spoilage,
-        double const weight
-    )
-        : fruit("Watermelon", days_until_grown, days_until_spoilage, weight) {
+    watermelon::watermelon(const int days_until_grown, const double water_units)
+        : fruit(
+            "Watermelon",
+            days_until_grown,
+            water_units,
+            watermelon_descriptor { }
+        ) {
     }
 }

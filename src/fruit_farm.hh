@@ -1,20 +1,27 @@
 #ifndef FRUIT_MARKET_HH
 #define FRUIT_MARKET_HH
 
-#include <iostream>
 #include <array>
+#include <iostream>
 
+#include "calculations.hh"
 #include "fruit.hh"
 
 namespace fmk {
     template <typename fruit_type_t>
     class fruit_farm {
+        static_assert(
+            std::is_base_of<fruit_base, fruit_type_t>::value,
+            "Fruit farms must be templated with fruit types"
+        );
+
     public:
         fruit_farm()
-            : _cost_inflation(1.0)
-            , _storage()
+            : _storage()
             , _fruit_count(0) {
         }
+
+        virtual ~fruit_farm() = default;
 
         void
         tick(int const days) {
@@ -24,28 +31,27 @@ namespace fmk {
         }
 
         void
-        print_fruit() const {
-            printf("There are %lu fruits\n", _fruit_count);
-            for (size_t i = 0; i < _fruit_count; ++i) {
-                std::cout << (i + 1) << ") " << _storage.at(i).to_string() <<
-                    "\n";
-            }
-        }
+        grow_fruit(const int days_to_grow, double water_units) {
+            static_assert(
+                std::is_constructible<fruit_type_t, int, double>::value,
+                "This fruit type is not constructible with an int and a double"
+            );
 
-        void
-        add_fruit(
-            const int    days_to_grow,
-            const int    days_to_spoil,
-            const double weight
-        ) {
-            fruit_type_t fruit = fruit_type_t {
-                days_to_grow,
-                days_to_spoil,
-                weight
-            };
+            fruit_type_t fruit = fruit_type_t { days_to_grow, water_units };
 
             _storage.at(_fruit_count) = std::move(fruit);
             _fruit_count++;
+            std::cout << "!";
+        }
+
+        double
+        sell_fruit(const size_t index) {
+            fruit_type_t &fruit = _storage.at(index);
+            double const  price = calc::base_fruit_price(fruit);
+
+            remove_fruit(index);
+
+            return price * get_fruit_price_factor();
         }
 
         [[nodiscard]] auto
@@ -54,28 +60,6 @@ namespace fmk {
         )
             -> fruit_type_t & {
             return _storage.at(index);
-        }
-
-        auto
-        remove_fruit(
-            const size_t index
-        )
-            -> void {
-            if (index == _fruit_count) {
-                _fruit_count--;
-                return;
-            }
-
-            for (size_t i = index; i < _fruit_count; ++i) {
-                _storage[i] = std::move(_storage[i + 1]);
-            }
-
-            _fruit_count--;
-        }
-
-        bool
-        can_add_more_fruit() const {
-            return _fruit_count < _storage.size();
         }
 
         void
@@ -93,57 +77,71 @@ namespace fmk {
             _storage     = fruits;
         }
 
+        bool
+        can_add_more_fruit() const {
+            return _fruit_count < _storage.size();
+        }
+
         size_t
         get_fruit_count() const {
             return _fruit_count;
         }
 
+        void
+        print_fruit() const {
+            printf("There are %lu fruits\n\n", _fruit_count);
+            for (size_t i = 0; i < _fruit_count; ++i) {
+                std::cout << (i + 1) << ") " << _storage.at(i).to_string() <<
+                    "\n";
+            }
+        }
+
     protected:
-        double                        _cost_inflation;
         std::array<fruit_type_t, 128> _storage;
         size_t                        _fruit_count;
+
+        [[nodiscard]] virtual auto
+        get_fruit_price_factor() const noexcept
+            -> double = 0;
+
+    private:
+        auto
+        remove_fruit(
+            const size_t index
+        )
+            -> void {
+            if (index == _fruit_count) {
+                _fruit_count--;
+                return;
+            }
+
+            for (size_t i = index; i < _fruit_count; ++i) {
+                _storage[i] = std::move(_storage[i + 1]);
+            }
+
+            _fruit_count--;
+        }
     };
 
-    class strawberry_farm : public fruit_farm<strawberry> {
-    public:
-        strawberry_farm();
-
-        void
-        grow_strawberry(double water_units, int days_to_grow);
-
-        double
-        calculate_strawberry_price(strawberry const &fruit) const;
-
-        double
-        sell_strawberry(size_t index);
+    class strawberry_farm final : public fruit_farm<strawberry> {
+    protected:
+        [[nodiscard]] auto
+        get_fruit_price_factor() const noexcept
+            -> double override;
     };
 
-    class elderberry_farm : public fruit_farm<elderberry> {
-    public:
-        elderberry_farm();
-
-        void
-        grow_elderberry(double water_units, int days_to_grow);
-
-        double
-        calculate_elderberry_price(elderberry const &fruit) const;
-
-        double
-        sell_elderberry(size_t index);
+    class elderberry_farm final : public fruit_farm<elderberry> {
+    protected:
+        [[nodiscard]] auto
+        get_fruit_price_factor() const noexcept
+            -> double override;
     };
 
-    class watermelon_farm : public fruit_farm<watermelon> {
-    public:
-        watermelon_farm();
-
-        double
-        calculate_watermelon_price(watermelon const &fruit) const;
-
-        void
-        grow_watermelon(double water_units, int days_to_grow);
-
-        double
-        sell_watermelon(size_t index);
+    class watermelon_farm final : public fruit_farm<watermelon> {
+    protected:
+        [[nodiscard]] auto
+        get_fruit_price_factor() const noexcept
+            -> double override;
     };
 }
 
