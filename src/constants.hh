@@ -31,7 +31,7 @@ namespace fmk {
     constexpr double MIN_REQUEST_WEIGHT = 0.5;
     constexpr double MAX_REQUEST_WEIGHT = 100.0;
 
-    constexpr double SUCCESSFUL_REQUEST_BONUS = 500.0;
+    constexpr double SUCCESSFUL_REQUEST_BONUS = 2500.0;
     constexpr double QUALITY_BONUS            = 15.0;
 }
 

@@ -77,6 +77,12 @@ namespace fmk { namespace ui {
         -> void;
 
     auto
+    request_validation_note(
+        const std::pair<request_kind, std::pair<double, int>> &request
+    )
+        -> bool;
+
+    auto
     request_fulfilment_ui(
         farmer &                                         the_farmer,
         std::pair<request_kind, std::pair<double, int>> &request

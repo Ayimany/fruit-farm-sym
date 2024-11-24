@@ -22,6 +22,8 @@ namespace fmk {
                 return "watermelon";
             }
         }
+
+        throw std::runtime_error { "Unknown request kind" };
     }
 
     auto

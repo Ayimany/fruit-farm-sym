@@ -43,7 +43,7 @@ namespace fmk {
             return 0.0;
         }
 
-        return (fruit.get_weight()) / (fruit.get_days_to_full_growth() + 1);
+        return fruit.get_weight() / (fruit.get_days_to_full_growth() + 1);
     }
 
     class fruit {

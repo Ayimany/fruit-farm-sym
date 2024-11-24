@@ -1,5 +1,4 @@
 #include "system_ui.hh"
-
 #include <iostream>
 
 #include "constants.hh"
@@ -298,7 +297,7 @@ namespace fmk {namespace ui {
 
             puts("What would you like to do?");
             puts("0) Exit");
-            puts("1) Regenerate requests");
+            puts("1) Regenerate requests (takes 3 days)");
             puts("2) View Requests");
             puts("3) Fulfill Request");
 
@@ -310,6 +309,7 @@ namespace fmk {namespace ui {
                     return;
                 }
                 case 1: {
+                    the_farmer.tick(3);
                     generator.regenerate_requests(the_farmer);
                     break;
                 }
@@ -324,12 +324,28 @@ namespace fmk {namespace ui {
                     break;
                 }
                 default: {
-                    throw std::runtime_error {
-                        "Supposedly unreachable code reached."
-                    };
+                    break;
                 }
             }
         } while (choice != 0);
+    }
+
+    auto
+    request_validation_note(
+        const std::pair<request_kind, std::pair<double, int>> &request
+    )
+        -> bool {
+        if (request.second.second == 0) {
+            puts("This request has expired.");
+            return false;
+        }
+
+        if (request.second.first <= 0) {
+            puts("This request has already been fulfilled.");
+            return false;
+        }
+
+        return true;
     }
 
     auto
@@ -350,40 +366,38 @@ namespace fmk {namespace ui {
 
             userprompt();
             std::cin >> choice;
-        } while (choice < 0 || choice > 3);
 
-        std::pair<request_kind, std::pair<double, int>> &request = generator.
-            get_request_1();
-
-        switch (choice) {
-            case 0: {
-                return;
+            // Repetition is somewhat necessary here due to reference handling
+            switch (choice) {
+                case 0: {
+                    return;
+                }
+                case 1: {
+                    std::pair<request_kind, std::pair<double, int>> &request =
+                        generator.get_request_1();
+                    request_validation_note(request);
+                    request_fulfilment_ui(the_farmer, request);
+                    break;
+                }
+                case 2: {
+                    std::pair<request_kind, std::pair<double, int>> &request =
+                        generator.get_request_2();
+                    request_validation_note(request);
+                    request_fulfilment_ui(the_farmer, request);
+                    break;
+                }
+                case 3: {
+                    std::pair<request_kind, std::pair<double, int>> &request =
+                        generator.get_request_3();
+                    request_validation_note(request);
+                    request_fulfilment_ui(the_farmer, request);
+                    break;
+                }
+                default: {
+                    continue;
+                }
             }
-            case 1: {
-                break;
-            }
-            case 2: {
-                request = generator.get_request_2();
-                break;
-            }
-            case 3: {
-                request = generator.get_request_3();
-                break;
-            }
-            default: {
-                throw std::runtime_error {
-                    "Supposedly unreachable code reached."
-                };
-            }
-        }
-
-        if (request.second.second == 0) {
-            puts("This request has expired.");
-
-            return;
-        }
-
-        request_fulfilment_ui(the_farmer, request);
+        } while (choice != 0);
     }
 
     auto
@@ -415,15 +429,17 @@ namespace fmk {namespace ui {
                     userprompt();
                     std::cin >> index;
 
-                    if (index < 0 || index > farm.get_fruit_count()) {
+                    if (index <= 0 || index > farm.get_fruit_count()) {
                         puts("Invalid strawberry");
                         newline();
                         continue;
                     }
 
+                    index--;
+
                     strawberry &fruit = farm.get_fruit(index);
 
-                    if (!fruit.is_fully_grown() || fruit.is_spoiled()) {
+                    if (fruit.is_spoiled()) {
                         puts("You cannot offer this strawberry!");
                         newline();
                         continue;
@@ -461,15 +477,17 @@ namespace fmk {namespace ui {
                     userprompt();
                     std::cin >> index;
 
-                    if (index < 0 || index > farm.get_fruit_count()) {
+                    if (index <= 0 || index > farm.get_fruit_count()) {
                         puts("Invalid elderberry");
                         newline();
                         continue;
                     }
 
+                    index--;
+
                     elderberry &fruit = farm.get_fruit(index);
 
-                    if (!fruit.is_fully_grown() || fruit.is_spoiled()) {
+                    if (fruit.is_spoiled()) {
                         puts("You cannot offer this elderberry!");
                         newline();
                         continue;
@@ -507,15 +525,17 @@ namespace fmk {namespace ui {
                     userprompt();
                     std::cin >> index;
 
-                    if (index < 0 || index > farm.get_fruit_count()) {
+                    if (index <= 0 || index > farm.get_fruit_count()) {
                         puts("Invalid watermelon");
                         newline();
                         continue;
                     }
 
+                    index--;
+
                     watermelon &fruit = farm.get_fruit(index);
 
-                    if (!fruit.is_fully_grown() || fruit.is_spoiled()) {
+                    if (fruit.is_spoiled()) {
                         puts("You cannot offer this watermelon!");
                         newline();
                         continue;
@@ -540,6 +560,7 @@ namespace fmk {namespace ui {
                 SUCCESSFUL_REQUEST_BONUS
             );
 
+            request.second.second = 0.0;
             the_farmer.add_money(SUCCESSFUL_REQUEST_BONUS);
         }
     }

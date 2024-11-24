@@ -42,12 +42,6 @@ namespace fmk {
         )
             -> void;
 
-        auto
-        can_complete_request(
-            fruit const &f
-        ) const
-            -> bool;
-
         [[nodiscard]] auto
         get_request_1()
             -> std::pair<request_kind, std::pair<double, int>> &;
