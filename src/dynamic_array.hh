@@ -1,14 +1,14 @@
 #ifndef DYNAMIC_ARRAY_HH
 #define DYNAMIC_ARRAY_HH
 
-#include <cstdlib>
-#include <cstring>
 #include <functional>
 #include <stdexcept>
 
-namespace fmk {
-    // Use of vectors is forbidden, so we will design our own array
+namespace fmk { namespace util {
+    // Use of vectors is forbidden. Custom dynamic array.
     // I assume smart pointers are also not allowed, so I will use raw pointers
+    // This dynamic array is far from perfect, yet, it accomplishes the task
+    // at hand.
 
     /**
      * Represents a dynamic array that can only allocate as many elements as it
@@ -16,27 +16,25 @@ namespace fmk {
      * @tparam obj_type_t The type of element to hold.
      */
     template <typename obj_type_t>
-    class tight_dynamic_array {
+    class dynamic_array {
     public:
         using iterator   = obj_type_t *;
         using iterator_c = const obj_type_t *;
 
         explicit
-        tight_dynamic_array()
-            : _size(0) {
-            _data = static_cast<obj_type_t *>((calloc(0, sizeof(obj_type_t))));
-            if (_data == nullptr) {
-                throw std::runtime_error {
-                    "Could not allocate memory for a dynamic array"
-                };
-            }
+        dynamic_array(size_t const prealloc)
+            : _data(new obj_type_t[prealloc]())
+            , _size(0)
+            , _alloc(prealloc) {
         }
 
-        ~tight_dynamic_array() {
-            if (_data != nullptr) {
-                free(_data);
-                _data = nullptr;
-            }
+        explicit
+        dynamic_array()
+            : dynamic_array(10) {
+        }
+
+        ~dynamic_array() {
+            this->cleanup();
         }
 
         [[nodiscard]] auto
@@ -44,9 +42,8 @@ namespace fmk {
             size_t index
         )
             -> obj_type_t & {
-            if (index > _size) {
-                free(_data);
-                _data = nullptr;
+            if (index >= _size) {
+                this->cleanup();
 
                 throw std::runtime_error {
                     "Index " + std::to_string(index) +
@@ -57,14 +54,34 @@ namespace fmk {
             return _data[index];
         }
 
+        auto
+        insert(
+            obj_type_t obj_type
+        )
+            -> void {
+            if (_size == _alloc) {
+                this->resize(_alloc + 1);
+            }
+
+            _data[_size++] = std::move(obj_type);
+        }
+
         template <typename... arg_types_t>
         auto
         emplace(
             arg_types_t &&... args
         )
             -> void {
-            resize(_size + 1);
-            _data[_size++] = obj_type_t { args... };
+            static_assert(
+                std::is_constructible<obj_type_t, arg_types_t...>::value,
+                "Cannot construct the target object with the given arguments"
+            );
+
+            if (_size == _alloc) {
+                this->resize(_alloc + 1);
+            }
+
+            _data[_size++] = obj_type_t { std::forward<arg_types_t>(args)... };
         }
 
         auto
@@ -73,8 +90,7 @@ namespace fmk {
         )
             -> void {
             if (index >= _size) {
-                free(_data);
-                _data = nullptr;
+                this->cleanup();
 
                 throw std::runtime_error {
                     "Index " + std::to_string(index) +
@@ -83,30 +99,18 @@ namespace fmk {
             }
 
             if (index != _size - 1) {
-                memcpy(
-                    _data + index,
-                    _data + index + 1,
-                    (_size - index) * sizeof(obj_type_t)
-                );
+                for (size_t i = index; i < _size; ++i) {
+                    _data[i - 1] = obj_type_t(std::move(_data[i]));
+                }
             }
 
-            resize(--_size);
+            _size--;
         }
 
         [[nodiscard]] auto
         size() const noexcept
             -> size_t {
-            return this->_size;
-        }
-
-        auto
-        for_each(
-            std::function<void(obj_type_t &obj)> func
-        )
-            -> void {
-            for (size_t i = 0; i < this->_size; i++) {
-                func(_data[i]);
-            }
+            return _size;
         }
 
         iterator
@@ -134,45 +138,42 @@ namespace fmk {
             const size_t index
         )
             -> obj_type_t & {
-            return get(index);
+            return this->get(index);
         }
 
     private:
         obj_type_t *_data;
         size_t      _size;
+        size_t      _alloc;
 
         auto
         resize(
             const size_t alloc_count
         )
             -> void {
-            obj_type_t *reallocated_data;
+            auto *new_data = new obj_type_t[alloc_count];
 
-            if (alloc_count != 0) {
-                reallocated_data = static_cast<obj_type_t *>(realloc(
-                    _data,
-                    alloc_count * sizeof(obj_type_t)
-                ));
-            } else {
-                reallocated_data = static_cast<obj_type_t *>(calloc(
-                    0,
-                    sizeof(obj_type_t)
-                ));
+            for (size_t i = 0; i < alloc_count; ++i) {
+                new(&new_data[i]) obj_type_t(std::move(_data[i]));
+                _data[i].~obj_type_t();
             }
 
-            if (reallocated_data == nullptr) {
-                free(_data);
-                _data = nullptr;
+            this->cleanup();
+            _data = new_data;
+        }
 
-                throw std::runtime_error {
-                    "Could not reallocate memory for dynamic array growth"
-                };
+        auto
+        cleanup()
+            -> void {
+            if (_data == nullptr) {
+                return;
             }
 
-            _data = reallocated_data;
+            delete[](_data);
+            _data = nullptr;
         }
     };
-}
+}}
 
 #endif //DYNAMIC_ARRAY_HH
 

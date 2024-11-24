@@ -6,37 +6,6 @@
 #include "constants.hh"
 
 namespace fmk {
-    auto
-    calculate_fruit_weight(
-        const double water_units,
-        const int    days_to_grow,
-        const double water_factor
-    ) noexcept
-        -> double {
-        return (water_factor * water_units) / static_cast<double>(days_to_grow);
-    }
-
-    auto
-    calculate_spoiling_penalty(
-        const double weight
-    ) noexcept
-        -> int {
-        return static_cast<int>(std::round(weight / 2.0));
-    }
-
-    auto
-    calculate_days_to_spoil(
-        const int    days_to_grow,
-        const double weight,
-        double const spoilage_factor
-    ) noexcept
-        -> int {
-        const double penalty = calculate_spoiling_penalty(weight);
-        return static_cast<int>(std::round(
-            spoilage_factor * days_to_grow - penalty
-        ));
-    }
-
     strawberry_farm::strawberry_farm() = default;
 
     void
@@ -55,7 +24,7 @@ namespace fmk {
             STRAWBERRY_SPOILAGE_FACTOR
         );
 
-        _storage.emplace(days_to_grow, days_to_spoil, weight);
+        add_fruit(days_to_grow, days_to_spoil, weight);
     }
 
     double
@@ -68,14 +37,19 @@ namespace fmk {
     strawberry_farm::sell_strawberry(const size_t index) {
         strawberry const &fruit = _storage[index];
         double const      price = calculate_strawberry_price(fruit);
-        _storage.remove(index);
+
+        remove_fruit(index);
+
         return price;
     }
 
-    banana_farm::banana_farm() = default;
+    elderberry_farm::elderberry_farm() = default;
 
     void
-    banana_farm::grow_banana(const double water_units, const int days_to_grow) {
+    elderberry_farm::grow_elderberry(
+        const double water_units,
+        const int    days_to_grow
+    ) {
         const double weight = calculate_fruit_weight(
             water_units,
             days_to_grow,
@@ -87,20 +61,22 @@ namespace fmk {
             BANANA_SPOILAGE_FACTOR
         );
 
-        _storage.emplace(days_to_grow, days_to_spoil, weight);
+        add_fruit(days_to_grow, days_to_spoil, weight);
     }
 
     double
-    banana_farm::calculate_banana_price(banana const &fruit) const {
+    elderberry_farm::calculate_elderberry_price(elderberry const &fruit) const {
         return calculate_generic_fruit_price(fruit) * _cost_inflation *
                BANANA_PRICE_FACTOR;
     }
 
     double
-    banana_farm::sell_banana(const size_t index) {
-        banana const &fruit = _storage[index];
-        double const  price = calculate_banana_price(fruit);
-        _storage.remove(index);
+    elderberry_farm::sell_elderberry(const size_t index) {
+        elderberry const &fruit = _storage[index];
+        double const      price = calculate_elderberry_price(fruit);
+
+        remove_fruit(index);
+
         return price;
     }
 
@@ -122,7 +98,7 @@ namespace fmk {
             WATERMELON_SPOILAGE_FACTOR
         );
 
-        _storage.emplace(days_to_grow, days_to_spoil, weight);
+        add_fruit(days_to_grow, days_to_spoil, weight);
     }
 
     double
@@ -135,7 +111,9 @@ namespace fmk {
     watermelon_farm::sell_watermelon(const size_t index) {
         watermelon const &fruit = _storage[index];
         double const      price = calculate_watermelon_price(fruit);
-        _storage.remove(index);
+
+        remove_fruit(index);
+
         return price;
     }
 }
