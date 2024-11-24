@@ -1,7 +1,3 @@
-//
-// Created by ayimany on 11/23/24.
-//
-
 #include "utility.hh"
 
 namespace fmk { namespace util {

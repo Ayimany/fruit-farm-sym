@@ -27,7 +27,8 @@ namespace fmk {
         print_fruit() const {
             printf("There are %lu fruits\n", _fruit_count);
             for (size_t i = 0; i < _fruit_count; ++i) {
-                std::cout << _storage.at(i).to_string() << "\n";
+                std::cout << (i + 1) << ") " << _storage.at(i).to_string() <<
+                    "\n";
             }
         }
 
@@ -45,6 +46,14 @@ namespace fmk {
 
             _storage.at(_fruit_count) = std::move(fruit);
             _fruit_count++;
+        }
+
+        [[nodiscard]] auto
+        get_fruit(
+            size_t index
+        )
+            -> fruit_type_t & {
+            return _storage.at(index);
         }
 
         auto

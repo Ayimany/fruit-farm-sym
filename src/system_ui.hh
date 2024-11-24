@@ -1,6 +1,11 @@
 #ifndef SYSTEM_UI_HH
 #define SYSTEM_UI_HH
 #include "farmer.hh"
+#include "request_generator.hh"
+
+namespace fmk {
+    class request_generator;
+}
 
 namespace fmk { namespace ui {
     auto
@@ -51,8 +56,30 @@ namespace fmk { namespace ui {
         -> void;
 
     auto
+    display_request(
+        const std::pair<request_kind, std::pair<double, int>> &request
+    )
+        -> void;
+
+    auto
     requests_ui(
-        const farmer &farmer
+        farmer &           the_farmer,
+        request_generator &generator
+    )
+        -> void;
+
+    auto
+    request_fetching_ui(
+        farmer &           the_farmer,
+        request_generator &generator
+    )
+        -> void;
+
+    auto
+    request_fulfilment_ui(
+        farmer &                                         the_farmer,
+        request_generator &                              generator,
+        std::pair<request_kind, std::pair<double, int>> &request
     )
         -> void;
 

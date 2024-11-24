@@ -1,11 +1,13 @@
 #include "constants.hh"
 #include "farmer.hh"
+#include "request_generator.hh"
 #include "system_ui.hh"
 
 int
 main() {
     fmk::ui::print_welcome();
-    fmk::farmer farmer(fmk::FARMER_STARTING_CASH);
+    fmk::farmer            farmer(fmk::FARMER_STARTING_CASH);
+    fmk::request_generator request_generator;
 
     int choice;
     do {
@@ -28,7 +30,7 @@ main() {
             }
 
             case 4: {
-                fmk::ui::requests_ui(farmer);
+                fmk::ui::requests_ui(farmer, request_generator);
                 break;
             }
 

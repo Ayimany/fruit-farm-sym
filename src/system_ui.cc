@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "constants.hh"
+#include "request_generator.hh"
 #include "utility.hh"
 
 namespace fmk {namespace ui {
@@ -253,10 +254,236 @@ namespace fmk {namespace ui {
     }
 
     auto
-    requests_ui(
-        const farmer &farmer
+    display_request(
+        const std::pair<request_kind, std::pair<double, int>> &request
     )
         -> void {
+        std::string const kind_str        = rkind_to_str(request.first);
+        int const         days_to_fulfill = request.second.second;
+        bool const        can_fulfill     = days_to_fulfill > 0;
+        double const      weight          = request.second.first;
+
+        puts("REQUEST:");
+        printf("* Solicits: %s\n", kind_str.c_str());
+        printf("* Weight: %s\n", util::strfmt("%.2f kg", weight).c_str());
+
+        if (can_fulfill) {
+            printf("* Days to fulfill: %d", days_to_fulfill);
+        } else {
+            puts("* EXPIRED");
+        }
+    }
+
+    auto
+    requests_ui(
+        farmer &           the_farmer,
+        request_generator &generator
+    )
+        -> void {
+        int choice;
+        do {
+            puts("What would you like to do?");
+            puts("0) Exit");
+            puts("1) Regenerate requests");
+            puts("2) View Requests");
+            puts("3) Fulfill Request");
+
+            std::cin >> choice;
+        } while (choice < 0 || choice > 3);
+
+        divider();
+
+        switch (choice) {
+            case 0: {
+                return;
+            }
+            case 1: {
+                generator.regenerate_requests(the_farmer);
+                break;
+            }
+            case 2: {
+                display_request(generator.get_request_1());
+                display_request(generator.get_request_2());
+                display_request(generator.get_request_3());
+                break;
+            }
+            case 3: {
+                request_fetching_ui(the_farmer, generator);
+                break;
+            }
+            default: {
+                throw std::runtime_error {
+                    "Supposedly unreachable code reached."
+                };
+            }
+        }
+    }
+
+    auto
+    request_fetching_ui(
+        farmer &           the_farmer,
+        request_generator &generator
+    )
+        -> void {
+        int choice;
+        do {
+            puts("Which request?");
+            puts("0) Exit");
+            puts("1) Request 1");
+            puts("2) Request 2");
+            puts("3) Request 3");
+
+            std::cin >> choice;
+        } while (choice < 0 || choice > 3);
+
+        divider();
+
+        std::pair<request_kind, std::pair<double, int>> &request = generator.
+            get_request_1();
+
+        switch (choice) {
+            case 0: {
+                return;
+            }
+            case 1: {
+                break;
+            }
+            case 2: {
+                request = generator.get_request_2();
+                break;
+            }
+            case 3: {
+                request = generator.get_request_3();
+                break;
+            }
+            default: {
+                throw std::runtime_error {
+                    "Supposedly unreachable code reached."
+                };
+            }
+        }
+
+        divider();
+
+        if (request.second.second == 0) {
+            puts("This request has expired.");
+            return;
+        }
+
+        request_fulfilment_ui(the_farmer, generator, request);
+    }
+
+    auto
+    request_fulfilment_ui(
+        farmer &                                         the_farmer,
+        request_generator &                              generator,
+        std::pair<request_kind, std::pair<double, int>> &request
+    )
+        -> void {
+        switch (request.first) {
+            case request_kind::STRAWBERRY: {
+                strawberry_farm &farm = the_farmer.get_strawberry_farm();
+
+                const bool has_fruit = farm.get_fruit_count() == 0;
+
+                if (!has_fruit) {
+                    puts("You have no strawberries to offer.");
+                }
+
+                farm.print_fruit();
+
+                puts("Which strawberries will you offer? Type their number");
+                puts("Type 0 to stop offering");
+
+                int index;
+                do {
+                    std::cin >> index;
+                    if (index < 0 || index > farm.get_fruit_count()) {
+                        puts("Invalid strawberry");
+                    }
+
+                    strawberry &fruit = farm.get_fruit(index);
+                    request.second.first -= fruit.get_weight();
+
+                    const double cash = farm.sell_strawberry(index);
+                    the_farmer.add_money(cash);
+                } while (index != 0 && request.second.second > 0);
+
+                break;
+            }
+            case request_kind::ELDERBERRY: {
+                elderberry_farm &farm = the_farmer.get_elderberry_farm();
+
+                const bool has_fruit = farm.get_fruit_count() == 0;
+                const bool has_farm  = the_farmer.has_elderberry_farm();
+
+                if (!has_fruit || !has_farm) {
+                    puts("You have no elderberries to offer.");
+                }
+
+                farm.print_fruit();
+
+                puts("Which elderberries will you offer? Type their number");
+                puts("Type 0 to stop offering");
+
+                int index;
+                do {
+                    std::cin >> index;
+                    if (index < 0 || index > farm.get_fruit_count()) {
+                        puts("Invalid strawberry");
+                    }
+
+                    elderberry &fruit = farm.get_fruit(index);
+                    request.second.first -= fruit.get_weight();
+
+                    const double cash = farm.sell_elderberry(index);
+                    the_farmer.add_money(cash);
+                } while (index != 0 && request.second.second > 0);
+
+                break;
+            }
+            case request_kind::WATERMELON: {
+                watermelon_farm &farm = the_farmer.get_watermelon_farm();
+
+                const bool has_fruit = farm.get_fruit_count() == 0;
+                const bool has_farm  = the_farmer.has_watermelon_farm();
+
+                if (!has_fruit || !has_farm) {
+                    puts("You have no watermelons to offer.");
+                }
+
+                farm.print_fruit();
+
+                puts("Which watermelons will you offer? Type their number");
+                puts("Type 0 to stop offering");
+
+                int index;
+                do {
+                    std::cin >> index;
+                    if (index < 0 || index > farm.get_fruit_count()) {
+                        puts("Invalid strawberry");
+                    }
+
+                    watermelon &fruit = farm.get_fruit(index);
+                    request.second.first -= fruit.get_weight();
+
+                    const double cash = farm.sell_watermelon(index);
+                    the_farmer.add_money(cash);
+                } while (index != 0 && request.second.second > 0);
+
+                break;
+            }
+        }
+
+        if (request.second.second <= 0) {
+            puts("You have fulfilled this request entirely");
+            printf(
+                "You will be awarded an extra $%.2f\n",
+                SUCCESSFUL_REQUEST_BONUS
+            );
+
+            the_farmer.add_money(SUCCESSFUL_REQUEST_BONUS);
+        }
     }
 
     auto

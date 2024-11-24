@@ -16,4 +16,6 @@ add_executable(fruit_project src/main.cc
         src/farmer.cc
         src/farmer.hh
         src/utility.cc
+        src/request_generator.cc
+        src/request_generator.hh
 )
