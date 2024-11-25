@@ -1,9 +1,7 @@
 #ifndef REQUEST_GENERATOR_HH
 #define REQUEST_GENERATOR_HH
-#include <stdexcept>
 #include <utility>
 
-#include "farmer.hh"
 #include "fruit.hh"
 
 namespace fmk {
