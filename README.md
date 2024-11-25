@@ -24,7 +24,7 @@ result in purchases and task fulfilment. Try it and farm away!
 
 # UML Diagram
 
-In progress, as project is being refactored.
+![UML Diagram](resources/diagram.png)
 
 # Disclaimers
 

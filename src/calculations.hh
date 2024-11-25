@@ -87,6 +87,13 @@ namespace fmk { namespace calc {
         fruit const &fruit
     ) noexcept
         -> double;
+
+    [[nodiscard]] auto
+    supply_demand_penalty(
+        size_t fruit_count,
+        size_t storage_size
+    ) noexcept
+        -> double;
 }}
 
 #endif //CALCULATIONS_HH

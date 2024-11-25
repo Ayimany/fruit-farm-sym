@@ -70,4 +70,16 @@ namespace fmk { namespace calc {
         return fruit.get_weight() / (fruit.get_days_to_full_growth() + 1) +
                fruit.get_quality_factor() * constants::QUALITY_BONUS;
     }
+
+    auto
+    supply_demand_penalty(
+        const size_t fruit_count,
+        const size_t storage_size
+    ) noexcept
+        -> double {
+        const auto rfcount = static_cast<long double>(fruit_count);
+        const auto rscount = static_cast<long double>(storage_size);
+
+        return static_cast<double>((rscount - (rfcount / 2.0)) / rscount);
+    }
 }}
