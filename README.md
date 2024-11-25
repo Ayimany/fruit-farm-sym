@@ -26,11 +26,32 @@ result in purchases and task fulfilment. Try it and farm away!
 
 ![UML Diagram](resources/diagram.png)
 
+# Building
+
+To build the project:
+
+With CMake
+
+```sh
+mkdir build
+cd build
+cmake ..
+make # or ninja, or whatever you use
+```
+
+Manually
+
+```sh
+clang++ src/*.cc
+# or
+g++ src/*.cc
+```
+
 # Disclaimers
 
 From what I understand based on the assignment, some features from the C++
 language along, with some entities from the standard library are forbidden. As
 such, some of the present solutions may not be optimal (such as not employing
-the use of `std::vector` or similar entities).
+the use of `std::vector`, repetition of some code, etc.).
 
 
