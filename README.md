@@ -39,12 +39,27 @@ cmake ..
 make # or ninja, or whatever you use
 ```
 
-Manually
+Manually, for UNIX shells
 
 ```sh
 clang++ src/*.cc
 # or
 g++ src/*.cc
+
+./a.out # Or whatever you named your file
+```
+
+Manually, for CMD or Powershell. I don't currently have access to a machine
+with Windows installed, yet this should work.
+
+```sh
+cd src
+
+clang++ calculations.cc farmer.cc fruit.cc fruit_descriptor.cc fruit_farm.cc main.cc request_generator.cc system_ui.cc utility.cc
+# or
+g++ calculations.cc farmer.cc fruit.cc fruit_descriptor.cc fruit_farm.cc main.cc request_generator.cc system_ui.cc utility.cc
+
+.\a.exe # Or whatever you named your file
 ```
 
 # Disclaimers
