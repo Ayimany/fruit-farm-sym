@@ -125,25 +125,25 @@ namespace fmk {
 
     private:
         /// The farmer's balance
-        double _money;
+        double money_;
 
         /// Determines if the farmer has an elderberry farm
-        bool _has_elderberry_farm;
+        bool has_elderberry_farm_;
 
         /// Determines if the farmer has a watermelon farm
-        bool _has_watermelon_farm;
+        bool has_watermelon_farm_;
 
         /// Determines if the farmer is the best farmer
-        bool _is_best_farmer;
+        bool is_best_farmer_;
 
         /// The farmer's strawberry farm
-        strawberry_farm _strawberry_farm;
+        strawberry_farm strawberry_farm_;
 
         /// The farmer's elderberry farm
-        elderberry_farm _elderberry_farm;
+        elderberry_farm elderberry_farm_;
 
         /// The farmer's watermelon farm
-        watermelon_farm _watermelon_farm;
+        watermelon_farm watermelon_farm_;
     };
 }
 

@@ -93,13 +93,13 @@ namespace fmk {
 
     private:
         /// Request 1
-        std::pair<request_kind, std::pair<double, int>> _req_1;
+        std::pair<request_kind, std::pair<double, int>> req_1_;
 
         /// Request 2
-        std::pair<request_kind, std::pair<double, int>> _req_2;
+        std::pair<request_kind, std::pair<double, int>> req_2_;
 
         /// Request 3
-        std::pair<request_kind, std::pair<double, int>> _req_3;
+        std::pair<request_kind, std::pair<double, int>> req_3_;
     };
 }
 

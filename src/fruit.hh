@@ -119,22 +119,22 @@ namespace fmk {
 
     protected:
         /// The name of the fruit
-        std::string _name;
+        std::string name_;
 
         /// The weight of the fruit
-        double _weight;
+        double weight_;
 
         /// The days left to fully grow
-        int _days_left_to_grow;
+        int days_left_to_grow_;
 
         /// The days left to spoil
-        int _days_left_to_spoil;
+        int days_left_to_spoil_;
 
         /// A factor that will influence the cost of this fruit
-        double _quality_factor;
+        double quality_factor_;
 
         /// Determines if this fruit was incorrectly cared for
-        bool _incorrect_care;
+        bool incorrect_care_;
     };
 
     class strawberry : public fruit {

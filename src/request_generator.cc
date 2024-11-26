@@ -48,9 +48,9 @@ namespace fmk {
     }
 
     request_generator::request_generator()
-        : _req_1 { request_kind::STRAWBERRY, { 0, 0 } }
-        , _req_2 { request_kind::STRAWBERRY, { 0, 0 } }
-        , _req_3 { request_kind::STRAWBERRY, { 0, 0 } } {
+        : req_1_ { request_kind::STRAWBERRY, { 0, 0 } }
+        , req_2_ { request_kind::STRAWBERRY, { 0, 0 } }
+        , req_3_ { request_kind::STRAWBERRY, { 0, 0 } } {
     }
 
     auto
@@ -58,9 +58,9 @@ namespace fmk {
         const int days
     )
         -> void {
-        _req_1.second.second = std::max(_req_1.second.second - days, 0);
-        _req_2.second.second = std::max(_req_2.second.second - days, 0);
-        _req_3.second.second = std::max(_req_3.second.second - days, 0);
+        req_1_.second.second = std::max(req_1_.second.second - days, 0);
+        req_2_.second.second = std::max(req_2_.second.second - days, 0);
+        req_3_.second.second = std::max(req_3_.second.second - days, 0);
     }
 
     auto
@@ -85,17 +85,17 @@ namespace fmk {
             constants::MAX_REQUEST_WEIGHT
         };
 
-        _req_1 = std::make_pair(
+        req_1_ = std::make_pair(
             int_to_request_kind(kind_dist(gen)),
             std::make_pair(weight_dist(gen), day_dist(gen))
         );
 
-        _req_2 = std::make_pair(
+        req_2_ = std::make_pair(
             int_to_request_kind(kind_dist(gen)),
             std::make_pair(weight_dist(gen), day_dist(gen))
         );
 
-        _req_3 = std::make_pair(
+        req_3_ = std::make_pair(
             int_to_request_kind(kind_dist(gen)),
             std::make_pair(weight_dist(gen), day_dist(gen))
         );
@@ -104,18 +104,18 @@ namespace fmk {
     auto
     request_generator::get_request_1()
         -> std::pair<request_kind, std::pair<double, int>> & {
-        return _req_1;
+        return req_1_;
     }
 
     auto
     request_generator::get_request_2()
         -> std::pair<request_kind, std::pair<double, int>> & {
-        return _req_2;
+        return req_2_;
     }
 
     auto
     request_generator::get_request_3()
         -> std::pair<request_kind, std::pair<double, int>> & {
-        return _req_3;
+        return req_3_;
     }
 }

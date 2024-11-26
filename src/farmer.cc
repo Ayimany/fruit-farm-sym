@@ -2,10 +2,10 @@
 
 namespace fmk {
     farmer::farmer(const double starting_cash)
-        : _money { starting_cash }
-        , _has_elderberry_farm { false }
-        , _has_watermelon_farm { false }
-        , _is_best_farmer { false } {
+        : money_ { starting_cash }
+        , has_elderberry_farm_ { false }
+        , has_watermelon_farm_ { false }
+        , is_best_farmer_ { false } {
     }
 
     auto
@@ -14,15 +14,15 @@ namespace fmk {
     )
         -> void {
         // Tick all farms
-        _strawberry_farm.tick(days);
-        _elderberry_farm.tick(days);
-        _watermelon_farm.tick(days);
+        strawberry_farm_.tick(days);
+        elderberry_farm_.tick(days);
+        watermelon_farm_.tick(days);
     }
 
     auto
     farmer::get_money() const
         -> double {
-        return _money;
+        return money_;
     }
 
     auto
@@ -30,7 +30,7 @@ namespace fmk {
         const double amt
     )
         -> void {
-        _money += amt;
+        money_ += amt;
     }
 
     auto
@@ -38,57 +38,57 @@ namespace fmk {
         const double amt
     )
         -> void {
-        _money -= amt;
+        money_ -= amt;
     }
 
     auto
     farmer::has_elderberry_farm() const
         -> bool {
-        return _has_elderberry_farm;;
+        return has_elderberry_farm_;;
     }
 
     auto
     farmer::has_watermelon_farm() const
         -> bool {
-        return _has_watermelon_farm;
+        return has_watermelon_farm_;
     }
 
     auto
     farmer::get_strawberry_farm()
         -> strawberry_farm & {
-        return _strawberry_farm;
+        return strawberry_farm_;
     }
 
     auto
     farmer::enable_elderberry_farm()
         -> void {
-        _has_elderberry_farm = true;
+        has_elderberry_farm_ = true;
     }
 
     auto
     farmer::get_elderberry_farm()
         -> elderberry_farm & {
-        return _elderberry_farm;
+        return elderberry_farm_;
     }
 
     auto
     farmer::enable_watermelon_farm()
         -> void {
-        _has_watermelon_farm = true;
+        has_watermelon_farm_ = true;
     }
 
     auto
     farmer::get_watermelon_farm()
         -> watermelon_farm & {
-        return _watermelon_farm;
+        return watermelon_farm_;
     }
 
     auto
     farmer::get_level() const noexcept
         -> int {
-        return 1 + (_has_elderberry_farm
+        return 1 + (has_elderberry_farm_
                         ? 1
-                        : 0) + (_has_watermelon_farm
+                        : 0) + (has_watermelon_farm_
                                     ? 1
                                     : 0);
     }
@@ -96,12 +96,12 @@ namespace fmk {
     auto
     farmer::is_best_farmer() const
         -> bool {
-        return _is_best_farmer;
+        return is_best_farmer_;
     }
 
     auto
     farmer::become_best_farmer()
         -> void {
-        _is_best_farmer = true;
+        is_best_farmer_ = true;
     }
 }

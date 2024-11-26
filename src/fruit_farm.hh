@@ -24,8 +24,8 @@ namespace fmk {
          * Constructs a fruit farm object
          */
         fruit_farm()
-            : _storage { }
-            , _fruit_count { 0 } {
+            : storage_ { }
+            , fruit_count_ { 0 } {
         }
 
         /**
@@ -39,7 +39,7 @@ namespace fmk {
          */
         void
         tick(int const days) {
-            for (auto &f : _storage) {
+            for (auto &f : storage_) {
                 f.tick(days);
             }
         }
@@ -58,8 +58,8 @@ namespace fmk {
 
             fruit_type_t fruit = fruit_type_t { days_to_grow, water_units };
 
-            _storage.at(_fruit_count) = std::move(fruit);
-            _fruit_count++;
+            storage_.at(fruit_count_) = std::move(fruit);
+            fruit_count_++;
         }
 
         /**
@@ -69,7 +69,7 @@ namespace fmk {
          */
         double
         sell_fruit(const size_t index) {
-            fruit_type_t &fruit = _storage.at(index);
+            fruit_type_t &fruit = storage_.at(index);
             double const  price = calc::base_fruit_price(fruit);
 
             remove_fruit(index);
@@ -87,7 +87,7 @@ namespace fmk {
             size_t index
         )
             -> fruit_type_t & {
-            return _storage.at(index);
+            return storage_.at(index);
         }
 
         /**
@@ -98,14 +98,14 @@ namespace fmk {
             std::array<fruit_type_t, 128> fruits;
             int                           count = 0;
 
-            for (auto &fruit : _storage) {
+            for (auto &fruit : storage_) {
                 if (!fruit.is_ill()) {
                     fruits.at(count++) = std::move(fruit);
                 }
             }
 
-            _fruit_count = count;
-            _storage     = fruits;
+            fruit_count_ = count;
+            storage_     = fruits;
         }
 
         /**
@@ -114,7 +114,7 @@ namespace fmk {
          */
         bool
         can_add_more_fruit() const {
-            return _fruit_count < _storage.size();
+            return fruit_count_ < storage_.size();
         }
 
         /**
@@ -123,7 +123,7 @@ namespace fmk {
          */
         size_t
         get_fruit_count() const {
-            return _fruit_count;
+            return fruit_count_;
         }
 
         /**
@@ -131,19 +131,19 @@ namespace fmk {
          */
         void
         print_fruit() const {
-            printf("There are %lu fruits\n\n", _fruit_count);
-            for (size_t i = 0; i < _fruit_count; ++i) {
-                std::cout << (i + 1) << ") " << _storage.at(i).to_string() <<
+            printf("There are %lu fruits\n\n", fruit_count_);
+            for (size_t i = 0; i < fruit_count_; ++i) {
+                std::cout << (i + 1) << ") " << storage_.at(i).to_string() <<
                     "\n";
             }
         }
 
     protected:
         /// The fruit storage
-        std::array<fruit_type_t, 128> _storage;
+        std::array<fruit_type_t, 128> storage_;
 
         /// Used to keep track of the valid fruits in storage
-        size_t _fruit_count;
+        size_t fruit_count_;
 
         /**
          * Returns a specific price multiplier per fruit
@@ -163,16 +163,16 @@ namespace fmk {
             const size_t index
         )
             -> void {
-            if (index == _fruit_count) {
-                _fruit_count--;
+            if (index == fruit_count_) {
+                fruit_count_--;
                 return;
             }
 
-            for (size_t i = index; i < _fruit_count; ++i) {
-                _storage[i] = std::move(_storage[i + 1]);
+            for (size_t i = index; i < fruit_count_; ++i) {
+                storage_[i] = std::move(storage_[i + 1]);
             }
 
-            _fruit_count--;
+            fruit_count_--;
         }
     };
 

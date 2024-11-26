@@ -9,12 +9,12 @@
 
 namespace fmk {
     fruit::fruit()
-        : _name { "Unknown" }
-        , _weight { 0.0 }
-        , _days_left_to_grow { 0 }
-        , _days_left_to_spoil { 0 }
-        , _quality_factor { 0 }
-        , _incorrect_care { true } {
+        : name_ { "Unknown" }
+        , weight_ { 0.0 }
+        , days_left_to_grow_ { 0 }
+        , days_left_to_spoil_ { 0 }
+        , quality_factor_ { 0 }
+        , incorrect_care_ { true } {
     }
 
     fruit::fruit(
@@ -23,8 +23,8 @@ namespace fmk {
         const double            water_units,
         fruit_descriptor const &descriptor
     )
-        : _name { std::move(name) }
-        , _weight {
+        : name_ { std::move(name) }
+        , weight_ {
             calc::fruit_weight(
                 days_until_grown,
                 water_units,
@@ -32,16 +32,16 @@ namespace fmk {
                 descriptor.get_water_factor()
             )
         }
-        , _days_left_to_grow { days_until_grown }
-        , _days_left_to_spoil {
+        , days_left_to_grow_ { days_until_grown }
+        , days_left_to_spoil_ {
             calc::days_to_spoil(
-                _days_left_to_grow,
-                _weight,
+                days_left_to_grow_,
+                weight_,
                 descriptor.get_spoiling_factor()
             )
         }
-        , _quality_factor { calc::fruit_quality(days_until_grown, water_units) }
-        , _incorrect_care {
+        , quality_factor_ { calc::fruit_quality(days_until_grown, water_units) }
+        , incorrect_care_ {
             calc::ill_status(
                 days_until_grown,
                 water_units,
@@ -57,78 +57,78 @@ namespace fmk {
         -> void {
         int residue = days;
 
-        if (_days_left_to_grow > 0) {
-            residue            = std::max(days - _days_left_to_grow, 0);
-            _days_left_to_grow = std::max(_days_left_to_grow - days, 0);
+        if (days_left_to_grow_ > 0) {
+            residue            = std::max(days - days_left_to_grow_, 0);
+            days_left_to_grow_ = std::max(days_left_to_grow_ - days, 0);
         }
 
-        if (_days_left_to_grow == 0 && residue > 0) {
-            _days_left_to_spoil = std::max(_days_left_to_spoil - residue, 0);
+        if (days_left_to_grow_ == 0 && residue > 0) {
+            days_left_to_spoil_ = std::max(days_left_to_spoil_ - residue, 0);
         }
     }
 
     auto
     fruit::get_name() const
         -> std::string {
-        return _name;
+        return name_;
     }
 
     auto
     fruit::get_days_to_full_growth() const
         -> int {
-        return _days_left_to_grow;
+        return days_left_to_grow_;
     }
 
     auto
     fruit::is_fully_grown() const
         -> bool {
-        return _days_left_to_grow == 0;
+        return days_left_to_grow_ == 0;
     }
 
     auto
     fruit::get_days_until_spoiled() const
         -> int {
-        return _days_left_to_spoil;
+        return days_left_to_spoil_;
     }
 
     auto
     fruit::is_spoiled() const
         -> bool {
-        return _days_left_to_spoil == 0;
+        return days_left_to_spoil_ == 0;
     }
 
     auto
     fruit::get_weight() const
         -> double {
-        return _weight;
+        return weight_;
     }
 
     auto
     fruit::get_quality_factor() const
         -> double {
-        return _quality_factor;
+        return quality_factor_;
     }
 
     auto
     fruit::is_ill() const
         -> bool {
-        return is_spoiled() || _incorrect_care;
+        return is_spoiled() || incorrect_care_;
     }
 
     auto
     fruit::to_string() const
         -> std::string {
-        std::string base = this->_name + ": ";
-        base += util::strfmt("%.2f kg", _weight) + "";
+        std::string base = this->name_ + ": ";
+        base += util::strfmt("%.2f kg", weight_) + "";
 
-        if (_incorrect_care) {
+        if (incorrect_care_) {
             base += ". Incorrect care! (Perhaps an ill-mix of water and time)";
         } else if (is_spoiled()) {
             base += ". Spoiled!";
         } else if (is_fully_grown()) {
-            base += util::strfmt(". Spoils in: %d days", _days_left_to_spoil);
+            base += util::strfmt(". Spoils in: %d days", days_left_to_spoil_);
         } else {
-            base += util::strfmt(". Grows in: %d days", _days_left_to_grow);
+            base += util::strfmt(". Grows in: %d days", days_left_to_grow_);
         }
 
         return base;
